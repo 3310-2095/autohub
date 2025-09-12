@@ -41,14 +41,15 @@ export default function CarGrid() {
     const [selectedCar, setSelectedCar] = useState<number | null>(null);
 
     return (
-        <div className="p-20 spacing w-full py-6 mt-10">
-            {/* ✅ Changed to grid with 3 columns */}
-            <div className="grid grid-cols-3 gap-10 w-full">
+        <div className="px-4 sm:px-8 lg:px-20 w-full py-6 mt-10">
+            {/* ✅ Responsive grid: 1 column on mobile, 2 on tablet, 3 on desktop */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 w-full">
                 {cars.map((car) => (
                     <div
                         key={car.id}
-                        className={`relative shadow-md flex flex-col items-center cursor-pointer transition-all rounded-xl hover:shadow-lg ${selectedCar === car.id ? "" : ""
-                            }`}
+                        className={`relative shadow-md flex flex-col items-center cursor-pointer transition-all rounded-xl hover:shadow-lg ${
+                            selectedCar === car.id ? "" : ""
+                        }`}
                         onClick={() => setSelectedCar(car.id)}
                     >
                         {/* Brand Logo (top-right) */}
@@ -56,8 +57,8 @@ export default function CarGrid() {
                             <Image
                                 src="/carimage/logo.png"
                                 alt="Brand Logo"
-                                width={60}
-                                height={60}
+                                width={50}
+                                height={50}
                                 className="object-contain"
                             />
                         </div>
@@ -71,7 +72,7 @@ export default function CarGrid() {
                                 height={200}
                                 className="object-contain drop-shadow-lg"
                             />
-                            <h3 className="text-center font-bold text-black mt-2 mr-32">
+                            <h3 className="text-center font-bold text-black mt-2 text-sm sm:text-base lg:text-lg">
                                 {car.name}
                             </h3>
                         </div>
