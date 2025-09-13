@@ -41,10 +41,10 @@ const XL7SuzukiPage = () => {
       {/* Left Section - 3D Car */}
       <div className="w-full md:w-4/5 relative h-[60vh] md:h-screen">
         {/* Title & Color Selector */}
-        <div className="absolute top-6 md:top-10 left-4 md:left-10 z-10">
-          <h2 className="text-3xl md:text-5xl font-bold leading-snug">
-            Suzuki Swift Hatchback <br />
-            5-door
+        <div className="absolute top-1 md:top-1 left-4 md:left-10 z-10">
+          <h2 className="text-3xl md:text-3xl font-bold leading-snug mb-5 ">
+            Suzuki Swift Hatchback  5-door
+           
           </h2>
           <h4 className="text-xs md:text-sm mt-4 md:mt-6">Colors:</h4>
           <div className="flex space-x-2 md:space-x-4 mt-2">
