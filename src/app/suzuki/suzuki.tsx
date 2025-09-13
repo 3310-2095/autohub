@@ -8,6 +8,7 @@ interface Car {
   name: string;
   image: string;
   brandLogo: string;
+  page?: string; // ✅ optional page property
 }
 
 const cars: Car[] = [
@@ -15,25 +16,26 @@ const cars: Car[] = [
     id: 1,
     name: "Xl 7 Hatchback",
     image: "/carimage/suzuki5.png",
-    brandLogo: "/logos/suzuki.png",
+    brandLogo: "/carimage/logo.png",
+    page: "/xl7suzuki", // ✅ link added only here
   },
   {
     id: 2,
     name: "S-presso Hatchback",
     image: "/carimage/suzuki6.png",
-    brandLogo: "/logos/suzuki.png",
+    brandLogo: "/carimage/logo.png",
   },
   {
     id: 3,
     name: "Jimny 3-Door SUV",
     image: "/carimage/suzuki7.png",
-    brandLogo: "/logos/suzuki.png",
+    brandLogo: "/carimage/logo.png",
   },
   {
     id: 4,
     name: "Eirtiga",
     image: "/carimage/suzuki5.png",
-    brandLogo: "/logos/suzuki.png",
+    brandLogo: "/carimage/logo.png",
   },
 ];
 
@@ -46,13 +48,15 @@ export default function CarGrid() {
         {cars.map((car) => (
           <div
             key={car.id}
-            className="relative shadow-md flex flex-col items-center cursor-pointer transition-all rounded-xl hover:shadow-lg"
-            onClick={() => router.push(`/xl7suzuki`)} // ✅ navigate to dynamic route
+            className={`relative shadow-md flex flex-col items-center rounded-xl transition-all hover:shadow-lg ${
+              car.page ? "cursor-pointer" : "cursor-default"
+            }`}
+            onClick={() => car.page && router.push(car.page)} // ✅ Only navigate if page exists
           >
             {/* Brand Logo */}
             <div className="absolute -top-6 right-4 bg-white shadow p-1 rounded-xl">
               <Image
-                src="/carimage/logo.png"
+                src={car.brandLogo}
                 alt="Brand Logo"
                 width={50}
                 height={50}

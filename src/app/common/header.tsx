@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import Image from "next/image"; // ✅ Import next/image
 import { FiSearch, FiBell } from "react-icons/fi";
 
 const Header = () => {
@@ -19,11 +22,17 @@ const Header = () => {
         {/* Right Section: Notification and Profile */}
         <div className="flex items-center space-x-6">
           <FiBell className="text-2xl cursor-pointer hover:text-gray-300" />
-          <img
-            src="/images/profile.jpg"
-            alt="Profile"
-            className="w-12 h-12 rounded-full object-cover border-2 border-gray-600"
-          />
+
+          {/* ✅ Fixed: Using Next.js <Image /> instead of <img> */}
+          <div className="relative w-12 h-12">
+            <Image
+              src="/images/profile.jpg"
+              alt="Profile"
+              fill
+              className="rounded-full object-cover border-2 border-gray-600"
+              priority // Loads faster (good for LCP)
+            />
+          </div>
         </div>
       </div>
     </header>

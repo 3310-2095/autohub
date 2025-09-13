@@ -4,35 +4,36 @@ import React, { useRef, useState, Suspense, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+import type { Object3D, Mesh, Material } from "three"; // ✅ Proper types
 
 // 3D Car Model Component
 const CarModel = ({ color }: { color: string }) => {
   const { scene } = useGLTF("/xcl7/XL7 Final Beige EXTERIOR (1).glb");
 
   useEffect(() => {
-    scene.traverse((child: any) => {
-      if (child.isMesh && child.material) {
-        child.castShadow = true;
-        child.receiveShadow = true;
-        child.material = child.material.clone();
-        child.material.color = new THREE.Color(color);
-        child.material.needsUpdate = true;
+    scene.traverse((child: Object3D) => {
+      // ✅ Properly typed: Check if child is a Mesh with Material
+      if ((child as Mesh).isMesh) {
+        const mesh = child as Mesh;
+        if (mesh.material) {
+          const material = mesh.material as Material;
+          mesh.castShadow = true;
+          mesh.receiveShadow = true;
+          mesh.material = material.clone();
+          (mesh.material as THREE.MeshStandardMaterial).color = new THREE.Color(color);
+          mesh.material.needsUpdate = true;
+        }
       }
     });
   }, [color, scene]);
 
-  return (
-    <primitive
-      object={scene}
-      scale={[1.5, 1.5, 1.5]}
-      position={[0, -1, 0]}
-    />
-  );
+  return <primitive object={scene} scale={[1.5, 1.5, 1.5]} position={[0, -1, 0]} />;
 };
 
 const XL7SuzukiPage = () => {
-  const orbitRef = useRef<any>();
-  const [rotationY, setRotationY] = useState(0);
+  const orbitRef = useRef<OrbitControlsImpl | null>(null);
+  // ❌ Removed rotationY & setRotationY (not used anywhere)
   const [carColor, setCarColor] = useState("#ffffff");
 
   return (
@@ -91,16 +92,14 @@ const XL7SuzukiPage = () => {
           </mesh>
 
           <Suspense fallback={null}>
-            <group rotation={[0, rotationY, 0]}>
-              <CarModel color={carColor} />
-            </group>
+            <CarModel color={carColor} />
           </Suspense>
 
           <OrbitControls ref={orbitRef} enablePan={false} />
         </Canvas>
       </div>
 
-      {/* Right Section - 20% Transparent Gradient */}
+      {/* Right Section - Info Panel */}
       <div
         className="w-full md:w-1/5 flex flex-col justify-between items-center p-4 md:p-6 mt-6 md:mt-0"
         style={{
@@ -125,26 +124,26 @@ const XL7SuzukiPage = () => {
 
         {/* Specs */}
         <div className="grid grid-cols-2 gap-2 md:gap-4 w-full max-w-xs text-center mt-4 md:mt-6">
-          <div className=" bg-opacity-70 p-2 md:p-4 rounded-lg hover:bg-gray-600 transition">
+          <div className="bg-opacity-70 p-2 md:p-4 rounded-lg hover:bg-gray-600 transition">
             <div className="text-lg md:text-xl font-bold">94 hp</div>
             <div className="text-xs md:text-sm">Engine Power</div>
           </div>
-          <div className=" bg-opacity-70 p-2 md:p-4 rounded-lg hover:bg-gray-600 transition">
+          <div className="bg-opacity-70 p-2 md:p-4 rounded-lg hover:bg-gray-600 transition">
             <div className="text-lg md:text-xl font-bold">1.2 L</div>
             <div className="text-xs md:text-sm">Engine Capacity</div>
           </div>
-          <div className=" bg-opacity-70 p-2 md:p-4 rounded-lg hover:bg-gray-600 transition">
+          <div className="bg-opacity-70 p-2 md:p-4 rounded-lg hover:bg-gray-600 transition">
             <div className="text-lg md:text-xl font-bold">112 mph</div>
             <div className="text-xs md:text-sm">Max Speed</div>
           </div>
-          <div className="  p-2 md:p-4 rounded-lg hover:bg-gray-600 transition">
+          <div className="p-2 md:p-4 rounded-lg hover:bg-gray-600 transition">
             <div className="text-lg md:text-xl font-bold">118 Nm</div>
             <div className="text-xs md:text-sm">Engine Torque</div>
           </div>
         </div>
 
         {/* 0-100 km/h */}
-        <div className="text-center mt-4 md:mt-6 space-y-1  p-2 md:p-4 rounded-lg hover:bg-gray-600 transition">
+        <div className="text-center mt-4 md:mt-6 space-y-1 p-2 md:p-4 rounded-lg hover:bg-gray-600 transition">
           <div className="text-lg md:text-xl font-semibold">0-100 km/h</div>
           <div className="text-xs md:text-sm text-gray-300">11.5 seconds</div>
         </div>
