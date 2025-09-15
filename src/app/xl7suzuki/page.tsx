@@ -5,15 +5,13 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
-import type { Object3D, Mesh, Material } from "three"; // ✅ Proper types
+import type { Object3D, Mesh, Material } from "three";
 
-// 3D Car Model Component
-const CarModel = ({ color }: { color: string }) => {
+const CarModel = ({ color, onLoad }: { color: string; onLoad: () => void }) => {
   const { scene } = useGLTF("/xcl7/XL7 Final Beige EXTERIOR (1).glb");
 
   useEffect(() => {
     scene.traverse((child: Object3D) => {
-      // ✅ Properly typed: Check if child is a Mesh with Material
       if ((child as Mesh).isMesh) {
         const mesh = child as Mesh;
         if (mesh.material) {
@@ -26,31 +24,42 @@ const CarModel = ({ color }: { color: string }) => {
         }
       }
     });
-  }, [color, scene]);
+
+    onLoad(); // Notify parent that model has loaded
+  }, [color, scene, onLoad]);
 
   return <primitive object={scene} scale={[1.5, 1.5, 1.5]} position={[0, -1, 0]} />;
 };
 
+// Loader Overlay
+const Loader = () => (
+  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
+    <div className="w-16 h-16 border-4 border-t-4 border-white border-opacity-80 border-t-yellow-500 rounded-full animate-spin"></div>
+  </div>
+);
+
 const XL7SuzukiPage = () => {
   const orbitRef = useRef<OrbitControlsImpl | null>(null);
-  // ❌ Removed rotationY & setRotationY (not used anywhere)
   const [carColor, setCarColor] = useState("#ffffff");
+  const [loading, setLoading] = useState(true);
 
   return (
     <div className="min-h-screen w-full flex flex-col md:flex-row bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white">
       {/* Left Section - 3D Car */}
       <div className="w-full md:w-4/5 relative h-[60vh] md:h-screen">
+        {/* Loader Overlay */}
+        {loading && <Loader />}
+
         {/* Title & Color Selector */}
-        <div className="absolute top-1 md:top-1 left-4 md:left-10 z-10">
+        <div className="absolute top-1 md:top-1 left-4 md:left-10 z-10 flex gap-16 align-middle">
           <h2 className="text-3xl md:text-3xl font-bold leading-snug mb-5 ">
-            Suzuki Swift Hatchback  5-door
-           
+            Suzuki Swift Hatchback 5-door
           </h2>
-          <h4 className="text-xs md:text-sm mt-4 md:mt-6">Colors:</h4>
-          <div className="flex space-x-2 md:space-x-4 mt-2">
+          <div className="flex md:space-x-4 mt-2 ">
+            <h4 className="text-4xl md:text-sm mt-1.5">Colors:</h4>
             <div
               onClick={() => setCarColor("#ffffff")}
-              className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white border-2 border-gray-400 cursor-pointer hover:border-yellow-500 transition"
+              className="w-4 h-4 md:w-8 md:h-8 rounded-full bg-white border-2 border-gray-400 cursor-pointer hover:border-yellow-500 transition"
             ></div>
             <div
               onClick={() => setCarColor("#c53030")}
@@ -64,39 +73,42 @@ const XL7SuzukiPage = () => {
         </div>
 
         {/* 3D Canvas */}
-        <Canvas
-          shadows
-          camera={{ position: [0, 1, 6], fov: 50 }}
-          className="w-full h-[60vh] md:h-screen"
-          style={{ background: "transparent" }}
-        >
-          <ambientLight intensity={0.3} />
-          <directionalLight
-            castShadow
-            position={[5, 5, 5]}
-            intensity={1}
-            shadow-mapSize-width={2048}
-            shadow-mapSize-height={2048}
-            shadow-camera-near={0.1}
-            shadow-camera-far={50}
-            shadow-camera-left={-10}
-            shadow-camera-right={10}
-            shadow-camera-top={10}
-            shadow-camera-bottom={-10}
-          />
+        <div className="relative w-full h-[60vh] md:h-screen">
+          <Canvas
+            shadows
+            camera={{ position: [0, 1, 6], fov: 50 }}
+            className="w-full h-[60vh] md:h-screen"
+            style={{ background: "#1a1a1a" }}
+          >
+            <ambientLight intensity={0.3} />
+            <directionalLight
+              castShadow
+              position={[5, 5, 5]}
+              intensity={1}
+              shadow-mapSize-width={2048}
+              shadow-mapSize-height={2048}
+              shadow-camera-near={0.1}
+              shadow-camera-far={50}
+              shadow-camera-left={-10}
+              shadow-camera-right={10}
+              shadow-camera-top={10}
+              shadow-camera-bottom={-10}
+            />
 
-          {/* Ground */}
-          <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -1, 0]}>
-            <planeGeometry args={[50, 50]} />
-            <shadowMaterial opacity={0.4} />
-          </mesh>
+            {/* Ground */}
+            <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -1, 0]}>
+              <planeGeometry args={[50, 50]} />
+              <meshStandardMaterial color="#2d2d2d" />
+            </mesh>
 
-          <Suspense fallback={null}>
-            <CarModel color={carColor} />
-          </Suspense>
+            {/* Car Model */}
+            <Suspense fallback={null}>
+              <CarModel color={carColor} onLoad={() => setLoading(false)} />
+            </Suspense>
 
-          <OrbitControls ref={orbitRef} enablePan={false} />
-        </Canvas>
+            <OrbitControls ref={orbitRef} enablePan={false} />
+          </Canvas>
+        </div>
       </div>
 
       {/* Right Section - Info Panel */}

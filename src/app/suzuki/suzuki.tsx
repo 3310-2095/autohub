@@ -15,26 +15,26 @@ const cars: Car[] = [
   {
     id: 1,
     name: "Xl 7 Hatchback",
-    image: "/carimage/suzuki5.png",
+    image: "/carimage/xl7.png",
     brandLogo: "/carimage/logo.png",
     page: "/xl7suzuki", // ✅ link added only here
   },
   {
     id: 2,
     name: "S-presso Hatchback",
-    image: "/carimage/suzuki6.png",
+    image: "/carimage/s-presso.png",
     brandLogo: "/carimage/logo.png",
   },
   {
     id: 3,
     name: "Jimny 3-Door SUV",
-    image: "/carimage/suzuki7.png",
+    image: "/carimage/jimny.png",
     brandLogo: "/carimage/logo.png",
   },
   {
     id: 4,
     name: "Eirtiga",
-    image: "/carimage/suzuki5.png",
+    image: "/carimage/ertiga.png",
     brandLogo: "/carimage/logo.png",
   },
 ];
@@ -64,14 +64,14 @@ export default function CarGrid() {
               />
             </div>
 
-            {/* Car Image */}
-            <div className="flex flex-col justify-center items-center h-full w-full bg-gradient-to-b from-[#f5f5f5] to-[#d9d9d9] rounded-xl px-3 py-8 shadow-inner">
+            {/* Car Image + Name */}
+            <div className="flex flex-col justify-center items-center h-[260px] w-[340px] bg-gradient-to-b from-gray-100 to-gray-300 rounded-xl  py-8 ">
               <Image
                 src={car.image}
                 alt={car.name}
                 width={300}
                 height={200}
-                className="object-contain drop-shadow-lg"
+                className="object-contain bg-transparent mix-blend-multiply"
               />
               <h3 className="text-center font-bold text-black mt-2 text-sm sm:text-base lg:text-lg">
                 {car.name}
