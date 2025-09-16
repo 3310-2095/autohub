@@ -109,7 +109,7 @@ const CarDetailPage = () => {
 
                 {/* Title & Color Selector */}
                 <div className="absolute top-2 left-2 md:top-4 md:left-10 z-10 flex flex-col md:flex-row gap-3 md:gap-16">
-                    <h2 className="text-lg sm:text-xl md:text-3xl font-bold leading-snug">
+                    <h2 className="text-lg sm:text-xl md:text-xl font-bold leading-snug">
                         {car.name}
                     </h2>
                     <div className="flex items-center gap-2 md:space-x-4">
@@ -174,7 +174,7 @@ const CarDetailPage = () => {
                 }}
             >
                 <div className="text-center space-y-4 w-full max-w-xs">
-                    <h2 className="text-lg sm:text-xl md:text-2xl font-semibold border-b border-gray-600 pb-2 md:pb-4">
+                    <h2 className="text-md sm:text-xl md:text-2xl font-semibold border-b border-gray-600 pb-2 md:pb-4">
                         {car.price}
                     </h2>
                     <div className="flex justify-center gap-2">
@@ -190,32 +190,32 @@ const CarDetailPage = () => {
                 {/* Specs */}
                 <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 w-full max-w-xs text-center mt-4 md:mt-6">
                     <div className="bg-opacity-70 p-2 sm:p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
-                        <div className="text-sm sm:text-base md:text-xl font-bold">{car.specs.power}</div>
+                        <div className="text-sm sm:text-base md:text-lg font-bold">{car.specs.power}</div>
                         <div className="text-xs sm:text-sm">Engine Power</div>
                     </div>
                     <div className="bg-opacity-70 p-2 sm:p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
-                        <div className="text-sm sm:text-base md:text-xl font-bold">{car.specs.capacity}</div>
+                        <div className="text-sm sm:text-base md:text-lg font-bold">{car.specs.capacity}</div>
                         <div className="text-xs sm:text-sm">Engine Capacity</div>
                     </div>
                     <div className="bg-opacity-70 p-2 sm:p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
-                        <div className="text-sm sm:text-base md:text-xl font-bold">{car.specs.speed}</div>
+                        <div className="text-sm sm:text-base md:text-lg font-bold">{car.specs.speed}</div>
                         <div className="text-xs sm:text-sm">Max Speed</div>
                     </div>
                     <div className="p-2 sm:p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
-                        <div className="text-sm sm:text-base md:text-xl font-bold">{car.specs.torque}</div>
+                        <div className="text-sm sm:text-base md:text-lg font-bold">{car.specs.torque}</div>
                         <div className="text-xs sm:text-sm">Engine Torque</div>
                     </div>
                 </div>
 
                 {/* 0-100 km/h */}
                 <div className="text-center mt-4 md:mt-6 space-y-1 p-2 sm:p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
-                    <div className="text-sm sm:text-base md:text-xl font-semibold">0-100 km/h</div>
+                    <div className="text-sm sm:text-base md:text-lg font-semibold">0-100 km/h</div>
                     <div className="text-xs sm:text-sm text-gray-300">{car.specs.acceleration}</div>
                 </div>
 
                 {/* View Price */}
                 <div className="w-full max-w-xs mt-4 md:mt-6 mb-6 md:mb-10">
-                    <button className="w-full py-2 sm:py-2.5 md:py-3 bg-white bg-opacity-90 text-black rounded-md hover:bg-gray-200 font-semibold transition text-sm sm:text-base md:text-base">
+                    <button className="w-full py-2 sm:py-2.5 md:py-3 bg-white bg-opacity-90 text-black rounded-md hover:bg-gray-200 font-semibold transition text-sm sm:text-base md:text-md">
                         VIEW PRICE
                     </button>
                 </div>
