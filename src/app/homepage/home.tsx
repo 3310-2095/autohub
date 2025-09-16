@@ -27,13 +27,13 @@ const brands: Brand[] = [
 ];
 
 const cars: Car[] = [
-  { id: 1, name: "Xl 7 Hatchback", image: "/carimage/xl7.png", brandLogo: "/carimage/logo.png", brand: "Suzuki", page: "/xl7suzuki" },
+  { id: 1, name: "Xl 7 Hatchback", image: "/carimage/xl7.png", brandLogo: "/carimage/logo.png", brand: "Suzuki", page:"/xl7suzuki" },
   { id: 2, name: "S-presso Hatchback", image: "/carimage/s-presso.png", brandLogo: "/carimage/logo.png", brand: "Suzuki" },
   { id: 3, name: "Jimny 3-Door SUV", image: "/carimage/jimny.png", brandLogo: "/carimage/logo.png", brand: "Suzuki" },
   { id: 4, name: "Ertiga", image: "/carimage/ertiga.png", brandLogo: "/carimage/logo.png", brand: "Suzuki" },
-  { id: 6, name: "Navara", image: "/carimage/navara.png", brandLogo: "/images/image 2.png", brand: "Nissan" },
+  { id: 6, name: "Navara", image: "/carimage/navara.png", brandLogo: "/images/image 2.png", brand: "Nissan"},
   { id: 7, name: "Kicks", image: "/carimage/kicks.png", brandLogo: "/images/image 2.png", brand: "Nissan" },
-  { id: 8, name: "Xpander", image: "/carimage/xpander.png", brandLogo: "/images/Mercedes Benz.png", brand: "Mitsubishi" },
+  { id: 8, name: "Xpander", image: "/carimage/xpander.png", brandLogo: "/images/Mercedes Benz.png", brand: "Mitsubishi",  },
   { id: 9, name: "Xforce", image: "/carimage/xforce.png", brandLogo: "/images/Mercedes Benz.png", brand: "Mitsubishi" },
   { id: 10, name: "Montero", image: "/carimage/montero.png", brandLogo: "/images/Mercedes Benz.png", brand: "Mitsubishi" },
 ];
@@ -78,7 +78,7 @@ export default function CarListing() {
           <div
             key={car.id}
             onClick={() => car.page && router.push(car.page)}
-            className="rounded-lg shadow-sm sm:shadow-md hover:shadow-lg transition p-2 sm:p-3 cursor-pointer bg-transparent"
+            className="rounded-lg border-1 border-gray-300 transition p-2 sm:p-3 cursor-pointer bg-transparent"
           >
             <div className="relative w-full aspect-square sm:aspect-[16/10]">
               <Image
@@ -90,12 +90,12 @@ export default function CarListing() {
                 priority
               />
               {/* Brand Logo */}
-              <div className="absolute -top-4 sm:-top-5 right-2 sm:right-3">
+              <div className="absolute -top-3 sm:-top-9 right-2 sm:right-3">
                 <Image
                   src={car.brandLogo}
                   alt="Brand Logo"
-                  width={40}
-                  height={40}
+                  width={50}
+                  height={50}
                   className="object-contain sm:w-[50px] sm:h-[50px]"
                 />
               </div>
