@@ -167,7 +167,7 @@ const CarDetailPage = () => {
 
             {/* Right Section - Info Panel */}
             <div
-                className="w-full md:w-1/5 flex flex-col justify-between items-center p-4 md:p-6 mt-4 md:mt-0"
+                className="w-full md:w-1/4 flex flex-col justify-between items-center p-4 md:p-6 mt-4 md:mt-0"
                 style={{
                     background: "linear-gradient(to bottom, rgba(75,85,99,0.8), rgba(55,65,81,0.8), rgba(31,41,55,0.8))",
                     backdropFilter: "blur(8px)",
@@ -199,8 +199,13 @@ const CarDetailPage = () => {
                     </div>
                     <div className="bg-opacity-70 p-2 sm:p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
                         <div className="text-sm sm:text-base md:text-lg font-bold">{car.specs.speed}</div>
-                        <div className="text-xs sm:text-sm">Max Speed</div>
+                        <div className="text-xs sm:text-sm">
+                            Max
+                            <span className="hidden md:inline"><br /></span> {/* ✅ sirf md+ pe break */}
+                            Speed
+                        </div>
                     </div>
+
                     <div className="p-2 sm:p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
                         <div className="text-sm sm:text-base md:text-lg font-bold">{car.specs.torque}</div>
                         <div className="text-xs sm:text-sm">Engine Torque</div>
