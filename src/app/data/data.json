@@ -94,7 +94,7 @@
             "brand": "Suzuki",
             "page": "/ertiga",
             "price": "₱ 900,000",
-            "modelPath": "/model/ertiga/ertiga.glb",
+            "modelPath": "/model/ertiga/ertiga.glb", 
             "colors": [
                 "#4a5568",
                 "#a0aec0",
