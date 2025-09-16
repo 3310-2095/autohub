@@ -3,12 +3,12 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import data from "@/app/data/data.json"; // ✅ adjust path
 
 interface Brand {
   id: number;
   name: string;
   logo: string;
-  page?: string;
 }
 
 interface Car {
@@ -17,32 +17,22 @@ interface Car {
   image: string;
   brandLogo: string;
   brand: string;
-  page?: string;
+  page: string; // ✅ required
 }
-
-const brands: Brand[] = [
-  { id: 1, name: "Suzuki", logo: "/carimage/logo.png", page: "/suzuki" },
-  { id: 2, name: "Nissan", logo: "/images/image 2.png", page: "/nissan" },
-  { id: 3, name: "Mitsubishi", logo: "/images/Mercedes Benz.png", page: "/mitsubishi" },
-];
-
-const cars: Car[] = [
-  { id: 1, name: "Xl 7 Hatchback", image: "/carimage/xl7.png", brandLogo: "/carimage/logo.png", brand: "Suzuki", page:"/xl7suzuki" },
-  { id: 2, name: "S-presso Hatchback", image: "/carimage/s-presso.png", brandLogo: "/carimage/logo.png", brand: "Suzuki" },
-  { id: 3, name: "Jimny 3-Door SUV", image: "/carimage/jimny.png", brandLogo: "/carimage/logo.png", brand: "Suzuki" },
-  { id: 4, name: "Ertiga", image: "/carimage/ertiga.png", brandLogo: "/carimage/logo.png", brand: "Suzuki" },
-  { id: 6, name: "Navara", image: "/carimage/navara.png", brandLogo: "/images/image 2.png", brand: "Nissan"},
-  { id: 7, name: "Kicks", image: "/carimage/kicks.png", brandLogo: "/images/image 2.png", brand: "Nissan" },
-  { id: 8, name: "Xpander", image: "/carimage/xpander.png", brandLogo: "/images/Mercedes Benz.png", brand: "Mitsubishi",  },
-  { id: 9, name: "Xforce", image: "/carimage/xforce.png", brandLogo: "/images/Mercedes Benz.png", brand: "Mitsubishi" },
-  { id: 10, name: "Montero", image: "/carimage/montero.png", brandLogo: "/images/Mercedes Benz.png", brand: "Mitsubishi" },
-];
 
 export default function CarListing() {
   const router = useRouter();
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
 
-  const filteredCars = selectedBrand ? cars.filter(car => car.brand === selectedBrand) : cars;
+  const brands: Brand[] = data.brands;
+  const cars: Car[] = data.cars;
+
+  const filteredCars = selectedBrand
+    ? cars.filter((car) => car.brand === selectedBrand)
+    : cars;
+
+  // ✅ Utility to make URL-friendly slug
+  const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, "-");
 
   return (
     <div className="px-3 sm:px-6 md:px-12 py-6 sm:py-10">
@@ -52,13 +42,14 @@ export default function CarListing() {
           <div
             key={brand.id}
             onClick={() => {
-              if (brand.page) {
-                router.push(brand.page);
-                setSelectedBrand(brand.name);
-              }
+              const slug = slugify(brand.name);
+              router.push(`/brand/${slug}`);
+              setSelectedBrand(brand.name);
             }}
             className={`flex min-w-[70px] sm:min-w-[110px] md:min-w-[140px] h-16 sm:h-24 md:h-28 items-center justify-center cursor-pointer transition ${
-              selectedBrand === brand.name ? "ring-2 ring-blue-500 rounded-lg" : ""
+              selectedBrand === brand.name
+                ? "ring-2 ring-blue-500 rounded-lg"
+                : ""
             }`}
           >
             <Image
@@ -77,8 +68,8 @@ export default function CarListing() {
         {filteredCars.map((car) => (
           <div
             key={car.id}
-            onClick={() => car.page && router.push(car.page)}
-            className="rounded-lg border-1 border-gray-300 transition p-2 sm:p-3 cursor-pointer bg-transparent"
+            onClick={() => router.push(`/cars/${car.id}`)} // ✅ go to slug route
+            className="rounded-lg border border-gray-300 transition p-2 sm:p-3 cursor-pointer bg-transparent"
           >
             <div className="relative w-full aspect-square sm:aspect-[16/10]">
               <Image

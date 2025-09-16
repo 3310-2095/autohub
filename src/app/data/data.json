@@ -1,0 +1,222 @@
+{
+    "brands": [
+        {
+            "id": 1,
+            "name": "Suzuki",
+            "logo": "/carimage/logo.png",
+            "page": "/suzuki"
+        },
+        {
+            "id": 2,
+            "name": "Nissan",
+            "logo": "/images/image 2.png",
+            "page": "/nissan"
+        },
+        {
+            "id": 3,
+            "name": "Mitsubishi",
+            "logo": "/images/Mercedes Benz.png",
+            "page": "/mitsubishi"
+        }
+    ],
+    "cars": [
+        {
+            "id": 1,
+            "name": "Xl 7 Hatchback",
+            "image": "/carimage/xl7.png",
+            "brandLogo": "/carimage/logo.png",
+            "brand": "Suzuki",
+            "page": "/xl7suzuki",
+            "price": "₱ 700,000",
+            "modelPath": "/model/XL7.glb",
+            "colors": [
+                "#ffffff",
+                "#ff0000",
+                "#0000ff"
+            ],
+            "specs": {
+                "power": "90 hp",
+                "capacity": "1.4 L",
+                "speed": "110 mph",
+                "torque": "120 Nm",
+                "acceleration": "12.0 seconds"
+            }
+        },
+        {
+            "id": 2,
+            "name": "S-presso Hatchback",
+            "image": "/carimage/s-presso.png",
+            "brandLogo": "/carimage/logo.png",
+            "brand": "Suzuki",
+            "page": "/spresso",
+            "price": "₱ 550,000",
+            "modelPath": "/model/spresso_model.glb",
+            "colors": [
+                "#000000",
+                "#ffffff",
+                "#00ff00"
+            ],
+            "specs": {
+                "power": "67 hp",
+                "capacity": "1.0 L",
+                "speed": "100 mph",
+                "torque": "90 Nm",
+                "acceleration": "13.5 seconds"
+            }
+        },
+        {
+            "id": 3,
+            "name": "Jimny 3-Door SUV",
+            "image": "/carimage/jimny.png",
+            "brandLogo": "/carimage/logo.png",
+            "brand": "Suzuki",
+            "page": "/jimny",
+            "price": "₱ 1,200,000",
+            "modelPath": "/model/jimny/jimny.glb",
+            "colors": [
+                "#2d3748",
+                "#1a202c",
+                "#f6e05e"
+            ],
+            "specs": {
+                "power": "100 hp",
+                "capacity": "1.5 L",
+                "speed": "140 mph",
+                "torque": "130 Nm",
+                "acceleration": "10.8 seconds"
+            }
+        },
+        {
+            "id": 4,
+            "name": "Ertiga",
+            "image": "/carimage/ertiga.png",
+            "brandLogo": "/carimage/logo.png",
+            "brand": "Suzuki",
+            "page": "/ertiga",
+            "price": "₱ 900,000",
+            "modelPath": "/model/ertiga/ertiga.glb",
+            "colors": [
+                "#4a5568",
+                "#a0aec0",
+                "#e53e3e"
+            ],
+            "specs": {
+                "power": "103 hp",
+                "capacity": "1.5 L",
+                "speed": "115 mph",
+                "torque": "138 Nm",
+                "acceleration": "11.0 seconds"
+            }
+        },
+        {
+            "id": 5,
+            "name": "Navara",
+            "image": "/carimage/navara.png",
+            "brandLogo": "/images/image 2.png",
+            "brand": "Nissan",
+            "page": "/navara",
+            "price": "₱ 1,500,000",
+            "modelPath": "/model/navara/navara.glb",
+            "colors": [
+                "#1a202c",
+                "#ffffff",
+                "#d69e2e"
+            ],
+            "specs": {
+                "power": "190 hp",
+                "capacity": "2.5 L",
+                "speed": "120 mph",
+                "torque": "450 Nm",
+                "acceleration": "9.5 seconds"
+            }
+        },
+        {
+            "id": 6,
+            "name": "Kicks",
+            "image": "/carimage/kicks.png",
+            "brandLogo": "/images/image 2.png",
+            "brand": "Nissan",
+            "page": "/kicks",
+            "price": "₱ 1,100,000",
+            "modelPath": "/model/kicks/kicks.glb",
+            "colors": [
+                "#2b6cb0",
+                "#ffffff",
+                "#000000"
+            ],
+            "specs": {
+                "power": "122 hp",
+                "capacity": "1.6 L",
+                "speed": "112 mph",
+                "torque": "155 Nm",
+                "acceleration": "10.5 seconds"
+            }
+        },
+        {
+            "id": 7,
+            "name": "Xpander",
+            "image": "/carimage/xpander.png",
+            "brandLogo": "/images/Mercedes Benz.png",
+            "brand": "Mitsubishi",
+            "page": "/xpander",
+            "price": "₱ 1,050,000",
+            "modelPath": "/model/xpander/xpander.glb",
+            "colors": [
+                "#718096",
+                "#ffffff",
+                "#e53e3e"
+            ],
+            "specs": {
+                "power": "104 hp",
+                "capacity": "1.5 L",
+                "speed": "110 mph",
+                "torque": "141 Nm",
+                "acceleration": "12.2 seconds"
+            }
+        },
+        {
+            "id": 8,
+            "name": "Xforce",
+            "image": "/carimage/xforce.png",
+            "brandLogo": "/images/Mercedes Benz.png",
+            "brand": "Mitsubishi",
+            "page": "/xforce",
+            "price": "₱ 1,300,000",
+            "modelPath": "/model/xforce/xforce.glb",
+            "colors": [
+                "#000000",
+                "#4a5568",
+                "#48bb78"
+            ],
+            "specs": {
+                "power": "105 hp",
+                "capacity": "1.5 L",
+                "speed": "115 mph",
+                "torque": "141 Nm",
+                "acceleration": "11.8 seconds"
+            }
+        },
+        {
+            "id": 9,
+            "name": "Montero",
+            "image": "/carimage/montero.png",
+            "brandLogo": "/images/Mercedes Benz.png",
+            "brand": "Mitsubishi",
+            "page": "/montero",
+            "price": "₱ 2,000,000",
+            "modelPath": "/model/montero/montero.glb",
+            "colors": [
+                "#2d3748",
+                "#ffffff",
+                "#c53030"
+            ],
+            "specs": {
+                "power": "165 hp",
+                "capacity": "2.4 L",
+                "speed": "118 mph",
+                "torque": "245 Nm",
+                "acceleration": "10.0 seconds"
+            }
+        }
+    ]
+}
