@@ -148,6 +148,14 @@ const CarDetailPage = () => {
         : null;
 
     const car: Car | undefined = data.cars.find((c) => c.id === carId);
+    
+    const handleBackClick = () => {
+        if (car) {
+            router.push(`/?brand=${car.brand}`);
+        } else {
+            router.push('/');
+        }
+    };
 
     useGLTF.preload(car ? car.modelPath : "");
 
@@ -179,7 +187,7 @@ const CarDetailPage = () => {
 
                 <div className="absolute top-2 left-2 md:top-4 md:left-10 z-10">
                     <button
-                        onClick={() => router.back()}
+                        onClick={handleBackClick}
                         className="mb-2 px-3 py-1 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition text-xs sm:text-sm md:text-sm"
                     >
                         Back

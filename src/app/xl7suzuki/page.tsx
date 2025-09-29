@@ -3,6 +3,7 @@
 import React, { useRef, useState, Suspense, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
+import { useRouter } from "next/navigation";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import type { Object3D, Mesh, Material } from "three";
@@ -43,9 +44,19 @@ const Loader = () => (
 );
 
 const XL7SuzukiPage = () => {
+  const router = useRouter();
   const orbitRef = useRef<OrbitControlsImpl | null>(null);
   const [carColor, setCarColor] = useState("#ffffff");
   const [loading, setLoading] = useState(true);
+
+  const handleBackClick = () => {
+    // Check if there's a referrer, otherwise go to brand page
+    if (document.referrer && document.referrer.includes('/brand/')) {
+      router.back();
+    } else {
+      router.push('/brand/suzuki');
+    }
+  };
 
   return (
     <div className="min-h-screen w-full flex flex-col md:flex-row bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white">
@@ -54,26 +65,34 @@ const XL7SuzukiPage = () => {
         {/* Loader Overlay */}
         {loading && <Loader />}
 
-        {/* Title & Color Selector */}
-        <div className="absolute top-2 left-2 md:top-4 md:left-10 z-10 flex flex-col md:flex-row gap-3 md:gap-16">
+        {/* Back Button & Title */}
+        <div className="absolute top-2 left-2 md:top-4 md:left-10 z-10">
+          <button
+            onClick={handleBackClick}
+            className="mb-2 px-3 py-1 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition text-xs sm:text-sm md:text-sm"
+          >
+            Back
+          </button>
           <h2 className="text-lg sm:text-xl md:text-3xl font-bold leading-snug">
-            Suzuki Swift Hatchback 5-door
+            Suzuki XL7 Hatchback
           </h2>
-          <div className="flex items-center gap-2 md:space-x-4">
-            <h4 className="text-sm sm:text-base md:text-sm">Colors:</h4>
-            <div
-              onClick={() => setCarColor("#ffffff")}
-              className="w-5 h-5 md:w-8 md:h-8 rounded-full bg-white border-2 border-gray-400 cursor-pointer hover:border-yellow-500 transition"
-            ></div>
-            <div
-              onClick={() => setCarColor("#c53030")}
-              className="w-5 h-5 md:w-8 md:h-8 rounded-full bg-red-600 border-2 border-gray-400 cursor-pointer hover:border-yellow-500 transition"
-            ></div>
-            <div
-              onClick={() => setCarColor("#3182ce")}
-              className="w-5 h-5 md:w-8 md:h-8 rounded-full bg-blue-600 border-2 border-gray-400 cursor-pointer hover:border-yellow-500 transition"
-            ></div>
-          </div>
+        </div>
+
+        {/* Color Selector */}
+        <div className="absolute top-2 right-2 md:top-4 md:right-10 z-10 flex items-center gap-2">
+          <h4 className="text-sm sm:text-base md:text-sm">Colors:</h4>
+          <div
+            onClick={() => setCarColor("#ffffff")}
+            className="w-5 h-5 md:w-8 md:h-8 rounded-full bg-white border-2 border-gray-400 cursor-pointer hover:border-yellow-500 transition"
+          ></div>
+          <div
+            onClick={() => setCarColor("#c53030")}
+            className="w-5 h-5 md:w-8 md:h-8 rounded-full bg-red-600 border-2 border-gray-400 cursor-pointer hover:border-yellow-500 transition"
+          ></div>
+          <div
+            onClick={() => setCarColor("#3182ce")}
+            className="w-5 h-5 md:w-8 md:h-8 rounded-full bg-blue-600 border-2 border-gray-400 cursor-pointer hover:border-yellow-500 transition"
+          ></div>
         </div>
 
         {/* 3D Canvas */}

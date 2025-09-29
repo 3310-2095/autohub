@@ -2,45 +2,45 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import data from "@/app/data/data.json";
 
 interface Car {
   id: number;
   name: string;
   image: string;
   brandLogo: string;
-  page?: string; // ✅ optional page property
+  brand: string;
+  page: string;
+  price: string;
+  modelPath: string;
+  colors: string[];
+  specs: {
+    power: string;
+    capacity: string;
+    speed: string;
+    torque: string;
+    acceleration: string;
+  };
 }
 
-const cars: Car[] = [
-  {
-    id: 1,
-    name: "Navara",
-    image: "/carimage/navara.png",
-    brandLogo: "/images/image 2.png",
-    page: "/xl7suzuki", // ✅ link added only here
-  },
-  {
-    id: 2,
-    name: "Kicks",
-    image: "/carimage/kicks.png",
-    brandLogo: "/images/image 2.png",
-  },
- 
-];
-
-export default function CarGrid() {
+export default function NissanPage() {
   const router = useRouter();
+  
+  const cars: Car[] = data.cars.filter(
+    (car) => car.brand.toLowerCase() === "nissan"
+  );
 
   return (
     <div className="px-2 sm:px-6 lg:px-20 w-full py-6 mt-6 sm:mt-10">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 capitalize">
+        Nissan Cars
+      </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-10 w-full">
         {cars.map((car) => (
           <div
             key={car.id}
-            className={`relative shadow-md flex flex-col items-center rounded-xl transition-all hover:shadow-lg ${
-              car.page ? "cursor-pointer" : "cursor-default"
-            }`}
-            onClick={() => car.page && router.push(car.page)}
+            className="relative shadow-md flex flex-col items-center rounded-xl transition-all hover:shadow-lg cursor-pointer"
+            onClick={() => router.push(`/cars/${car.id}`)}
           >
             {/* Brand Logo */}
             <div className="absolute -top-5 sm:-top-6 right-2 sm:right-4 bg-white shadow p-1 rounded-xl">

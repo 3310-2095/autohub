@@ -26,9 +26,9 @@
             "image": "/carimage/xl7.png",
             "brandLogo": "/carimage/logo.png",
             "brand": "Suzuki",
-            "page": "/xl7suzuki",
+            "page": "/cars/1",
             "price": "₱ 700,000",
-            "modelPath": "/model/XL7.glb",
+            "modelPath": "/xcl7/XL7 Final Beige EXTERIOR (1).glb",
             "colors": [
                 "#ffffff",
                 "#ff0000",

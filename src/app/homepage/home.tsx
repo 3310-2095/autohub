@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import data from "@/app/data/data.json"; // ✅ adjust path
 
 interface Brand {
@@ -22,7 +22,15 @@ interface Car {
 
 export default function CarListing() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+
+  useEffect(() => {
+    const brand = searchParams.get('brand');
+    if (brand) {
+      setSelectedBrand(brand);
+    }
+  }, [searchParams]);
 
   const brands: Brand[] = data.brands;
   const cars: Car[] = data.cars;
@@ -39,11 +47,15 @@ export default function CarListing() {
         {brands.map((brand) => (
           <div
             key={brand.id}
-            onClick={() =>
-              setSelectedBrand(
-                selectedBrand === brand.name ? null : brand.name
-              )
-            }
+            onClick={() => {
+              const newBrand = selectedBrand === brand.name ? null : brand.name;
+              setSelectedBrand(newBrand);
+              if (newBrand) {
+                router.push(`/?brand=${newBrand}`);
+              } else {
+                router.push('/');
+              }
+            }}
             className={`flex min-w-[70px] sm:min-w-[110px] md:min-w-[140px] h-16 sm:h-24 md:h-28 items-center justify-center cursor-pointer transition ${
               selectedBrand === brand.name
                 ? "ring-2 ring-blue-500 rounded-lg"
