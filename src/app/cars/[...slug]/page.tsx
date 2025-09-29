@@ -19,6 +19,7 @@ interface Car {
     page: string;
     price: string;
     modelPath: string;
+    interiorImage?: string; // ✅ made optional
     colors: string[];
     specs: {
         power: string;
@@ -29,6 +30,7 @@ interface Car {
     };
 }
 
+// CarModel component remains the same
 const CarModel = ({
     modelPath,
     carName,
@@ -56,26 +58,21 @@ const CarModel = ({
     useEffect(() => {
         if (!scene || isPositionSet.current) return;
 
+        // --- Camera and positioning logic ---
         const box = new THREE.Box3().setFromObject(scene);
         const sizeVec = box.getSize(new THREE.Vector3());
         const size = sizeVec.length();
         const center = box.getCenter(new THREE.Vector3());
-
         const validSize = isFinite(size) && size > 0 ? size : 2;
-
         const validCenter = {
             x: isFinite(center.x) ? center.x : 0,
             y: isFinite(center.y) ? center.y : 0,
             z: isFinite(center.z) ? center.z : 0,
         };
-
-        // Move model so it sits on ground
         const bottomY = box.min.y;
         scene.position.set(-validCenter.x, -bottomY, -validCenter.z);
         scene.updateMatrix();
         isPositionSet.current = true;
-
-        // Camera setup
         const minDistance = Math.max(validSize * 0.5, 1);
         const maxDistance = validSize * 3.5;
         const cameraPosition: [number, number, number] = [
@@ -88,17 +85,19 @@ const CarModel = ({
             validCenter.y,
             validCenter.z,
         ];
-
         setCameraParams(minDistance, maxDistance, cameraPosition, target);
-
-        // Ground plane
         setGroundY(box.min.y - 0.05);
 
+        // --- Shadow and visibility logic ---
         scene.traverse((child: Object3D) => {
             if ((child as Mesh).isMesh) {
                 const mesh = child as Mesh;
                 mesh.castShadow = true;
                 mesh.receiveShadow = true;
+            }
+
+            if (child.name.toLowerCase().includes("interior")) {
+                child.visible = false;
             }
         });
 
@@ -120,10 +119,12 @@ const Loader = () => (
     </div>
 );
 
+// The main page component
 const CarDetailPage = () => {
     const orbitRef = useRef<OrbitControlsImpl | null>(null);
     const [loading, setLoading] = useState(true);
     const [groundY, setGroundY] = useState(-0.5);
+    const [viewMode, setViewMode] = useState<"exterior" | "interior">("exterior");
     const [cameraParams, setCameraParams] = useState<{
         minDistance: number;
         maxDistance: number;
@@ -140,15 +141,14 @@ const CarDetailPage = () => {
     const router = useRouter();
     const carId = params?.slug
         ? parseInt(
-            Array.isArray(params.slug)
-                ? params.slug[params.slug.length - 1]
-                : params.slug
-        )
+              Array.isArray(params.slug)
+                  ? params.slug[params.slug.length - 1]
+                  : params.slug
+          )
         : null;
 
     const car: Car | undefined = data.cars.find((c) => c.id === carId);
 
-    // ✅ Hooks must always run
     useGLTF.preload(car ? car.modelPath : "");
 
     useEffect(() => {
@@ -162,23 +162,22 @@ const CarDetailPage = () => {
         return <div className="text-white text-center p-6">Car not found</div>;
     }
 
-    // ✅ Calculate base distance for zoom restriction
     const baseDistance = Math.hypot(
         cameraParams.cameraPosition[0] - cameraParams.target[0],
         cameraParams.cameraPosition[1] - cameraParams.target[1],
         cameraParams.cameraPosition[2] - cameraParams.target[2]
     );
-    const minZoom = Math.max(0.1, baseDistance * 0.7); // -30%
-    const maxZoom = baseDistance * 1.3; // +30%
+
+    const minZoom = Math.max(0.1, baseDistance * 0.25);
+    const maxZoom = baseDistance * 1.3;
 
     return (
         <div className="min-h-screen w-full flex flex-col md:flex-row bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white">
-            {/* Left Section */}
+            {/* Left Section - Viewer */}
             <div className="w-full md:w-4/5 relative h-[50vh] md:h-screen">
-                {loading && <Loader />}
+                {loading && viewMode === "exterior" && <Loader />}
 
                 <div className="absolute top-2 left-2 md:top-4 md:left-10 z-10">
-                    {/* ✅ Back Button */}
                     <button
                         onClick={() => router.back()}
                         className="mb-2 px-3 py-1 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition text-xs sm:text-sm md:text-sm"
@@ -190,87 +189,115 @@ const CarDetailPage = () => {
                     </h2>
                 </div>
 
-                <div className="relative w-full h-[50vh] md:h-screen">
-                    <Canvas
-                        shadows
-                        camera={{ position: cameraParams.cameraPosition, fov: 50 }}
-                        dpr={[
-                            1,
-                            typeof window !== "undefined" ? window.devicePixelRatio : 1,
-                        ]}
-                        gl={{
-                            antialias: true,
-                            toneMapping: THREE.ACESFilmicToneMapping,
-                            outputColorSpace: THREE.SRGBColorSpace,
-                        }}
-                        className="w-full h-[50vh] md:h-screen"
-                        style={{ background: "#1a1a1a" }}
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center justify-center p-1 bg-black bg-opacity-30 rounded-md">
+                    <button
+                        onClick={() => setViewMode("exterior")}
+                        className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                            viewMode === "exterior"
+                                ? "bg-white text-black"
+                                : "bg-transparent text-white hover:bg-white/10"
+                        }`}
                     >
-                        <ambientLight intensity={0.6} />
-                        <directionalLight
-                            castShadow
-                            position={[5, 8, 5]}
-                            intensity={1.2}
-                            shadow-mapSize-width={2048}
-                            shadow-mapSize-height={2048}
-                        />
-                        <directionalLight position={[-5, 5, -5]} intensity={0.5} />
+                        Exterior
+                    </button>
+                    <button
+                        onClick={() => setViewMode("interior")}
+                        className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                            viewMode === "interior"
+                                ? "bg-white text-black"
+                                : "bg-transparent text-white hover:bg-white/10"
+                        }`}
+                        disabled={!car.interiorImage} // ✅ disable if missing
+                    >
+                        Interior
+                    </button>
+                </div>
 
-                        {/* ✅ Add this line for realistic background */}
-                        <Environment preset="city" background />
-
-
-                        {/* Dynamic Ground */}
-                        <mesh
-                            receiveShadow
-                            rotation={[-Math.PI / 2, 0, 0]}
-                            position={[0, groundY, 0]}
+                <div className="relative w-full h-full">
+                    {viewMode === "exterior" ? (
+                        <Canvas
+                            shadows
+                            camera={{ position: cameraParams.cameraPosition, fov: 50 }}
+                            dpr={[
+                                1,
+                                typeof window !== "undefined"
+                                    ? window.devicePixelRatio
+                                    : 1,
+                            ]}
+                            gl={{
+                                antialias: true,
+                                toneMapping: THREE.ACESFilmicToneMapping,
+                                outputColorSpace: THREE.SRGBColorSpace,
+                            }}
+                            className="w-full h-full"
+                            style={{ background: "#1a1a1a" }}
                         >
-                            <planeGeometry args={[100, 100]} />
-                            <meshStandardMaterial color="#2d2d2d" />
-                        </mesh>
-
-                        {/* Car */}
-                        <Suspense fallback={<group />}>
-                            <CarModel
-                                modelPath={car.modelPath}
-                                carName={car.name}
-                                onLoad={() => setLoading(false)}
-                                setCameraParams={(
-                                    minDistance,
-                                    maxDistance,
-                                    cameraPosition,
-                                    target
-                                ) =>
-                                    setCameraParams({
+                            <ambientLight intensity={0.6} />
+                            <directionalLight
+                                castShadow
+                                position={[5, 8, 5]}
+                                intensity={1.2}
+                                shadow-mapSize-width={2048}
+                                shadow-mapSize-height={2048}
+                            />
+                            <directionalLight position={[-5, 5, -5]} intensity={0.5} />
+                            <Environment preset="city" background />
+                            <mesh
+                                receiveShadow
+                                rotation={[-Math.PI / 2, 0, 0]}
+                                position={[0, groundY, 0]}
+                            >
+                                <planeGeometry args={[100, 100]} />
+                                <meshStandardMaterial color="#2d2d2d" />
+                            </mesh>
+                            <Suspense fallback={<group />}>
+                                <CarModel
+                                    modelPath={car.modelPath}
+                                    carName={car.name}
+                                    onLoad={() => setLoading(false)}
+                                    setCameraParams={(
                                         minDistance,
                                         maxDistance,
                                         cameraPosition,
-                                        target,
-                                    })
-                                }
-                                orbitRef={orbitRef}
-                                setGroundY={setGroundY}
+                                        target
+                                    ) =>
+                                        setCameraParams({
+                                            minDistance,
+                                            maxDistance,
+                                            cameraPosition,
+                                            target,
+                                        })
+                                    }
+                                    orbitRef={orbitRef}
+                                    setGroundY={setGroundY}
+                                />
+                            </Suspense>
+                            <OrbitControls
+                                ref={orbitRef}
+                                enablePan={false}
+                                enableDamping
+                                dampingFactor={0.15}
+                                minDistance={minZoom}
+                                maxDistance={maxZoom}
+                                target={cameraParams.target}
+                                minPolarAngle={Math.PI / 2}
+                                maxPolarAngle={Math.PI / 2}
                             />
-                        </Suspense>
-
-                        <OrbitControls
-                            ref={orbitRef}
-                            enablePan={false}
-                            enableDamping
-                            dampingFactor={0.15}
-                            minDistance={minZoom}
-                            maxDistance={maxZoom}
-                            target={cameraParams.target}
-                            minPolarAngle={Math.PI / 2}
-                            maxPolarAngle={Math.PI / 2}
-                        />
-                    </Canvas>
-
+                        </Canvas>
+                    ) : (
+                        <div
+                            className="w-full h-full bg-cover bg-center"
+                            style={{
+                                backgroundImage: car.interiorImage
+                                    ? `url(${car.interiorImage})`
+                                    : "none",
+                            }}
+                        ></div>
+                    )}
                 </div>
             </div>
 
-            {/* Right Section */}
+            {/* Right Section - Details */}
             <div
                 className="w-full md:w-1/4 flex flex-col justify-between items-center p-4 md:p-6 mt-4 md:mt-0"
                 style={{
@@ -283,14 +310,6 @@ const CarDetailPage = () => {
                     <h2 className="text-md sm:text-xl md:text-2xl font-semibold border-b border-gray-600 pb-2 md:pb-4">
                         {car.price}
                     </h2>
-                    <div className="flex justify-center gap-2">
-                        <button className="px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition text-xs sm:text-sm md:text-sm">
-                            Interior
-                        </button>
-                        <button className="px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-2 bg-white text-black rounded-md hover:bg-gray-200 transition text-xs sm:text-sm md:text-sm">
-                            Exterior
-                        </button>
-                    </div>
                 </div>
 
                 {/* Specs */}
