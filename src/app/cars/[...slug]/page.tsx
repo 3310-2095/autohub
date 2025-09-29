@@ -7,7 +7,7 @@ import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import type { Object3D, Mesh } from "three";
 import data from "@/app/data/data.json";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 // Define interfaces for data structure
 interface Car {
@@ -60,8 +60,6 @@ const CarModel = ({
         const sizeVec = box.getSize(new THREE.Vector3());
         const size = sizeVec.length();
         const center = box.getCenter(new THREE.Vector3());
-
-        console.log("Model:", carName, "Box Size:", sizeVec, "Center:", center);
 
         const validSize = isFinite(size) && size > 0 ? size : 2;
 
@@ -139,6 +137,7 @@ const CarDetailPage = () => {
     });
 
     const params = useParams();
+    const router = useRouter();
     const carId = params?.slug
         ? parseInt(
             Array.isArray(params.slug)
@@ -159,10 +158,18 @@ const CarDetailPage = () => {
         }
     }, [cameraParams, car]);
 
-    // ✅ Conditional return after hooks
     if (!car) {
         return <div className="text-white text-center p-6">Car not found</div>;
     }
+
+    // ✅ Calculate base distance for zoom restriction
+    const baseDistance = Math.hypot(
+        cameraParams.cameraPosition[0] - cameraParams.target[0],
+        cameraParams.cameraPosition[1] - cameraParams.target[1],
+        cameraParams.cameraPosition[2] - cameraParams.target[2]
+    );
+    const minZoom = Math.max(0.1, baseDistance * 0.7); // -30%
+    const maxZoom = baseDistance * 1.3; // +30%
 
     return (
         <div className="min-h-screen w-full flex flex-col md:flex-row bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white">
@@ -171,6 +178,13 @@ const CarDetailPage = () => {
                 {loading && <Loader />}
 
                 <div className="absolute top-2 left-2 md:top-4 md:left-10 z-10">
+                    {/* ✅ Back Button */}
+                    <button
+                        onClick={() => router.back()}
+                        className="mb-2 px-3 py-1 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition text-xs sm:text-sm md:text-sm"
+                    >
+                        Back
+                    </button>
                     <h2 className="text-lg sm:text-xl md:text-xl font-bold leading-snug">
                         {car.name}
                     </h2>
@@ -182,9 +196,7 @@ const CarDetailPage = () => {
                         camera={{ position: cameraParams.cameraPosition, fov: 50 }}
                         dpr={[
                             1,
-                            typeof window !== "undefined"
-                                ? window.devicePixelRatio
-                                : 1,
+                            typeof window !== "undefined" ? window.devicePixelRatio : 1,
                         ]}
                         gl={{
                             antialias: true,
@@ -202,11 +214,11 @@ const CarDetailPage = () => {
                             shadow-mapSize-width={2048}
                             shadow-mapSize-height={2048}
                         />
-                        <directionalLight
-                            position={[-5, 5, -5]}
-                            intensity={0.5}
-                        />
-                        <Environment preset="studio" />
+                        <directionalLight position={[-5, 5, -5]} intensity={0.5} />
+
+                        {/* ✅ Add this line for realistic background */}
+                        <Environment preset="city" background />
+
 
                         {/* Dynamic Ground */}
                         <mesh
@@ -242,26 +254,19 @@ const CarDetailPage = () => {
                             />
                         </Suspense>
 
-                        {/* <OrbitControls
-                            ref={orbitRef}
-                            enablePan={false}
-                            enableDamping
-                            dampingFactor={0.15}
-                            minDistance={cameraParams.minDistance}
-                            maxDistance={cameraParams.maxDistance}
-                            target={cameraParams.target}
-                        /> */}
                         <OrbitControls
                             ref={orbitRef}
                             enablePan={false}
                             enableDamping
                             dampingFactor={0.15}
-                            minDistance={0}          // ✅ No lower zoom limit
-                            maxDistance={Infinity}   // ✅ No upper zoom limit
+                            minDistance={minZoom}
+                            maxDistance={maxZoom}
                             target={cameraParams.target}
+                            minPolarAngle={Math.PI / 2}
+                            maxPolarAngle={Math.PI / 2}
                         />
-
                     </Canvas>
+
                 </div>
             </div>
 
@@ -324,9 +329,7 @@ const CarDetailPage = () => {
 
                 {/* 0-100 */}
                 <div className="text-center mt-6 p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
-                    <div className="text-base md:text-lg font-semibold">
-                        0-100 km/h
-                    </div>
+                    <div className="text-base md:text-lg font-semibold">0-100 km/h</div>
                     <div className="text-xs sm:text-sm text-gray-300">
                         {car.specs.acceleration}
                     </div>

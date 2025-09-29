@@ -94,7 +94,7 @@
             "brand": "Suzuki",
             "page": "/ertiga",
             "price": "₱ 900,000",
-            "modelPath": "/model/ertiga/ertiga.glb", 
+            "modelPath": "/model/ertiga.glb", 
             "colors": [
                 "#FFFFFF",
                 "#a0aec0",
@@ -138,7 +138,7 @@
             "brand": "Nissan",
             "page": "/kicks",
             "price": "₱ 1,100,000",
-            "modelPath": "/model/kicks/kicks.glb",
+            "modelPath": "/model/kicks.glb",
             "colors": [
                 "#2b6cb0",
                 "#ffffff",
@@ -204,7 +204,7 @@
             "brand": "Mitsubishi",
             "page": "/montero",
             "price": "₱ 2,000,000",
-            "modelPath": "/model/montero/montero.glb",
+            "modelPath": "/model/montero.glb",
             "colors": [
                 "#2d3748",
                 "#ffffff",
