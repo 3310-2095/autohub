@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import data from "@/app/data/data.json"; // ✅ adjust path
 
 interface Brand {
@@ -20,7 +20,7 @@ interface Car {
   page: string; // ✅ required
 }
 
-export default function CarListing() {
+function CarListingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
@@ -110,5 +110,13 @@ export default function CarListing() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function CarListing() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CarListingContent />
+    </Suspense>
   );
 }
