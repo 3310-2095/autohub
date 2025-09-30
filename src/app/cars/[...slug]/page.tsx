@@ -176,8 +176,9 @@ const CarDetailPage = () => {
         cameraParams.cameraPosition[2] - cameraParams.target[2]
     );
 
-    const minZoom = Math.max(0.1, baseDistance * 0.25);
-    const maxZoom = baseDistance * 1.3;
+    const fixedDistance = baseDistance * 0.3;
+    const minZoom = fixedDistance;
+    const maxZoom = fixedDistance;
 
     return (
         <div className="min-h-screen w-full flex flex-col md:flex-row bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white">
@@ -283,6 +284,7 @@ const CarDetailPage = () => {
                             <OrbitControls
                                 ref={orbitRef}
                                 enablePan={false}
+                                enableZoom={false}
                                 enableDamping
                                 dampingFactor={0.15}
                                 minDistance={minZoom}

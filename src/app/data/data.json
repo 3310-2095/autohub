@@ -28,7 +28,7 @@
             "brand": "Suzuki",
             "page": "/cars/1",
             "price": "₱ 700,000",
-            "modelPath": "/xcl7/XL7 Final Beige EXTERIOR (1).glb",
+            "modelPath": "/model/XL7.glb",
             "colors": [
                 "#ffffff",
                 "#ff0000",
@@ -160,7 +160,7 @@
             "brand": "Mitsubishi",
             "page": "/xpander",
             "price": "₱ 1,050,000",
-            "modelPath": "/model/xpander/xpander.glb",
+            "modelPath": "/model/xpander.glb",
             "colors": [
                 "#718096",
                 "#ffffff",
