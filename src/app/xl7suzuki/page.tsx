@@ -43,7 +43,7 @@ const Loader = () => (
   </div>
 );
 
-const XL7SuzukiPage = () => {
+function XL7SuzukiContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orbitRef = useRef<OrbitControlsImpl | null>(null);
@@ -202,4 +202,10 @@ const XL7SuzukiPage = () => {
   );
 };
 
-export default XL7SuzukiPage;
+export default function XL7SuzukiPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <XL7SuzukiContent />
+    </Suspense>
+  );
+}
