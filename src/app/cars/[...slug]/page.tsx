@@ -6,28 +6,32 @@ import { OrbitControls, useGLTF, Environment } from "@react-three/drei";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import type { Object3D, Mesh } from "three";
-import data from "@/app/data/data.json";
 import { useParams, useRouter } from "next/navigation";
 
 // Define interfaces for data structure
 interface Car {
-    id: number;
-    name: string;
-    image: string;
-    brandLogo: string;
-    brand: string;
-    page: string;
-    price: string;
-    modelPath: string;
-    interiorImage?: string; // ✅ made optional
-    colors: string[];
-    specs: {
-        power: string;
-        capacity: string;
-        speed: string;
-        torque: string;
-        acceleration: string;
+    _id: string;
+    sectionData: {
+        model: {
+            image: string;
+            modelimage: string;
+            make: string;
+            Model: string;
+            price: string;
+            Enginepower: string;
+            Enginecapacity: string;
+            Maxspeed: string;
+            Enginetorque: string;
+            "0-100km/h": string;
+        };
     };
+}
+
+interface ApiResponse {
+    success: boolean;
+    message: string;
+    count: number;
+    data: Car[];
 }
 
 // CarModel component remains the same
@@ -139,25 +143,55 @@ const CarDetailPage = () => {
 
     const params = useParams();
     const router = useRouter();
+    const [car, setCar] = useState<Car | null>(null);
+    const [apiLoading, setApiLoading] = useState(true);
+    
     const carId = params?.slug
-        ? parseInt(
-              Array.isArray(params.slug)
-                  ? params.slug[params.slug.length - 1]
-                  : params.slug
-          )
+        ? Array.isArray(params.slug)
+            ? params.slug[params.slug.length - 1]
+            : params.slug
         : null;
 
-    const car: Car | undefined = data.cars.find((c) => c.id === carId);
+    // Fetch car data from API
+    useEffect(() => {
+        const fetchCar = async () => {
+            if (!carId) return;
+            
+            try {
+                setApiLoading(true);
+                const response = await fetch("https://crmapi.conscor.com/api/general/mfind", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-api-key": "LHCHoE0IlCOuESA4VQuJ",
+                    },
+                    body: JSON.stringify({
+                        dbName: "virtualcar",
+                        collectionName: "model",
+                        query: { _id: carId },
+                        limit: 1,
+                    }),
+                });
+                
+                const result: ApiResponse = await response.json();
+                if (result.success && result.data.length > 0) {
+                    setCar(result.data[0]);
+                }
+            } catch (error) {
+                console.error("Error fetching car:", error);
+            } finally {
+                setApiLoading(false);
+            }
+        };
+        
+        fetchCar();
+    }, [carId]);
     
     const handleBackClick = () => {
-        if (car) {
-            router.push(`/?brand=${car.brand}`);
-        } else {
-            router.push('/');
-        }
+        router.back();
     };
 
-    useGLTF.preload(car ? car.modelPath : "");
+    useGLTF.preload(car ? car.sectionData.model.image.replace(/\.(jpg|png)$/, '') : "");
 
     useEffect(() => {
         if (orbitRef.current && car) {
@@ -165,6 +199,14 @@ const CarDetailPage = () => {
             orbitRef.current.update();
         }
     }, [cameraParams, car]);
+
+    if (apiLoading) {
+        return (
+            <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white">
+                <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-t-4 border-white border-opacity-80 border-t-yellow-500 rounded-full animate-spin"></div>
+            </div>
+        );
+    }
 
     if (!car) {
         return <div className="text-white text-center p-6">Car not found</div>;
@@ -194,7 +236,7 @@ const CarDetailPage = () => {
                         Back
                     </button>
                     <h2 className="text-lg sm:text-xl md:text-xl font-bold leading-snug">
-                        {car.name}
+                        {car.sectionData.model.Model}
                     </h2>
                 </div>
 
@@ -216,7 +258,7 @@ const CarDetailPage = () => {
                                 ? "bg-white text-black"
                                 : "bg-transparent text-white hover:bg-white/10"
                         }`}
-                        disabled={!car.interiorImage} // ✅ disable if missing
+                        disabled={true} // Interior not available
                     >
                         Interior
                     </button>
@@ -261,8 +303,8 @@ const CarDetailPage = () => {
                             </mesh>
                             <Suspense fallback={<group />}>
                                 <CarModel
-                                    modelPath={car.modelPath}
-                                    carName={car.name}
+                                    modelPath={car.sectionData.model.image.replace(/\.(jpg|png)$/, '')}
+                                    carName={car.sectionData.model.Model}
                                     onLoad={() => setLoading(false)}
                                     setCameraParams={(
                                         minDistance,
@@ -296,13 +338,10 @@ const CarDetailPage = () => {
                         </Canvas>
                     ) : (
                         <div
-                            className="w-full h-full bg-cover bg-center"
-                            style={{
-                                backgroundImage: car.interiorImage
-                                    ? `url(${car.interiorImage})`
-                                    : "none",
-                            }}
-                        ></div>
+                            className="w-full h-full bg-cover bg-center bg-gray-800 flex items-center justify-center"
+                        >
+                            <p className="text-white text-lg">Interior view not available</p>
+                        </div>
                     )}
                 </div>
             </div>
@@ -318,7 +357,7 @@ const CarDetailPage = () => {
             >
                 <div className="text-center space-y-4 w-full max-w-xs">
                     <h2 className="text-md sm:text-xl md:text-2xl font-semibold border-b border-gray-600 pb-2 md:pb-4">
-                        {car.price}
+                        ₱ {parseInt(car.sectionData.model.price).toLocaleString()}
                     </h2>
                 </div>
 
@@ -326,19 +365,19 @@ const CarDetailPage = () => {
                 <div className="grid grid-cols-2 gap-3 w-full max-w-xs text-center mt-6">
                     <div className="p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
                         <div className="text-base md:text-lg font-bold">
-                            {car.specs.power}
+                            {car.sectionData.model.Enginepower}
                         </div>
                         <div className="text-xs sm:text-sm">Engine Power</div>
                     </div>
                     <div className="p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
                         <div className="text-base md:text-lg font-bold">
-                            {car.specs.capacity}
+                            {car.sectionData.model.Enginecapacity}
                         </div>
                         <div className="text-xs sm:text-sm">Engine Capacity</div>
                     </div>
                     <div className="p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
                         <div className="text-base md:text-lg font-bold">
-                            {car.specs.speed}
+                            {car.sectionData.model.Maxspeed}
                         </div>
                         <div className="text-xs sm:text-sm">
                             Max
@@ -350,7 +389,7 @@ const CarDetailPage = () => {
                     </div>
                     <div className="p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
                         <div className="text-base md:text-lg font-bold">
-                            {car.specs.torque}
+                            {car.sectionData.model.Enginetorque}
                         </div>
                         <div className="text-xs sm:text-sm">Engine Torque</div>
                     </div>
@@ -360,7 +399,7 @@ const CarDetailPage = () => {
                 <div className="text-center mt-6 p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
                     <div className="text-base md:text-lg font-semibold">0-100 km/h</div>
                     <div className="text-xs sm:text-sm text-gray-300">
-                        {car.specs.acceleration}
+                        {car.sectionData.model["0-100km/h"]}
                     </div>
                 </div>
 

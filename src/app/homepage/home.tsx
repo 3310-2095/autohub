@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
+
+
 interface Brand {
   id: string;
   name: string;

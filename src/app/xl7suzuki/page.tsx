@@ -3,13 +3,13 @@
 import React, { useRef, useState, Suspense, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import type { Object3D, Mesh, Material } from "three";
 
-const CarModel = ({ color, onLoad }: { color: string; onLoad: () => void }) => {
-  const { scene } = useGLTF("/xcl7/XL7 Final Beige EXTERIOR (1).glb");
+const CarModel = ({ color, onLoad, modelPath }: { color: string; onLoad: () => void; modelPath: string }) => {
+  const { scene } = useGLTF(modelPath);
 
   useEffect(() => {
     scene.traverse((child: Object3D) => {
@@ -45,17 +45,15 @@ const Loader = () => (
 
 const XL7SuzukiPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const orbitRef = useRef<OrbitControlsImpl | null>(null);
   const [carColor, setCarColor] = useState("#ffffff");
   const [loading, setLoading] = useState(true);
+  
+  const glbPath = searchParams.get('glb') || "/xcl7/XL7 Final Beige EXTERIOR (1).glb";
 
   const handleBackClick = () => {
-    // Check if there's a referrer, otherwise go to brand page
-    if (document.referrer && document.referrer.includes('/brand/')) {
-      router.back();
-    } else {
-      router.push('/brand/suzuki');
-    }
+    router.push('/');
   };
 
   return (
@@ -130,7 +128,7 @@ const XL7SuzukiPage = () => {
 
             {/* Car Model */}
             <Suspense fallback={null}>
-              <CarModel color={carColor} onLoad={() => setLoading(false)} />
+              <CarModel color={carColor} onLoad={() => setLoading(false)} modelPath={glbPath} />
             </Suspense>
 
             <OrbitControls ref={orbitRef} enablePan={false} />
