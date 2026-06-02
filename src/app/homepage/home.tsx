@@ -152,23 +152,13 @@ function CarListingContent() {
   if (loading) {
     return (
       <div className="px-3 sm:px-6 md:px-12 py-6 sm:py-10">
-        {/* Brand Row Skeleton */}
-        <div className="w-full flex gap-3 sm:gap-6 justify-start sm:justify-center items-center overflow-x-auto mb-6 sm:mb-8 scrollbar-hide p-2 sm:p-3">
+        {/* Brand Row Skeleton only - cars show after brand selection */}
+        <div className="w-full flex gap-3 sm:gap-6 justify-start sm:justify-center items-center overflow-x-auto mb-6 sm:mb-8 p-2 sm:p-3">
           {[...Array(3)].map((_, i) => (
             <div
               key={i}
-              className="flex min-w-[70px] sm:min-w-[110px] md:min-w-[140px] h-16 sm:h-24 md:h-28 items-center justify-center bg-gray-200 rounded-lg animate-pulse"
-            ></div>
-          ))}
-        </div>
-        
-        {/* Cars Grid Skeleton */}
-        <div className="max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 mx-auto">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="rounded-lg border border-gray-300 p-2 sm:p-3 bg-transparent">
-              <div className="w-full aspect-square sm:aspect-[16/10] bg-gray-200 rounded animate-pulse"></div>
-              <div className="mt-2 sm:mt-3 h-4 bg-gray-200 rounded animate-pulse"></div>
-            </div>
+              className="flex-shrink-0 min-w-[70px] sm:min-w-[110px] md:min-w-[140px] h-16 sm:h-24 md:h-28 bg-gray-200 rounded-lg animate-pulse"
+            />
           ))}
         </div>
       </div>
@@ -216,7 +206,7 @@ function CarListingContent() {
           {filteredCars.map((car) => (
             <div
               key={car._id}
-              onClick={() => router.push(`/cars/${car._id}`)}
+              onClick={() => router.push(`/showroom?model=${encodeURIComponent(car.sectionData.model.Model)}&id=${car._id}`)}
               className="rounded-lg border border-gray-300 transition p-2 sm:p-3 cursor-pointer bg-transparent"
             >
               <div className="relative w-full aspect-square sm:aspect-[16/10]">

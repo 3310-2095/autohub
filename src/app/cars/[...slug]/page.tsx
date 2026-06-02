@@ -77,19 +77,16 @@ const CarModel = ({
         scene.position.set(-validCenter.x, -bottomY, -validCenter.z);
         scene.updateMatrix();
         isPositionSet.current = true;
-        const minDistance = Math.max(validSize * 0.5, 1);
-        const maxDistance = validSize * 3.5;
-        const cameraPosition: [number, number, number] = [
-            validCenter.x,
-            validCenter.y + validSize * 0.8,
-            validCenter.z + validSize * 2,
-        ];
-        const target: [number, number, number] = [
-            validCenter.x,
-            validCenter.y,
-            validCenter.z,
-        ];
-        setCameraParams(minDistance, maxDistance, cameraPosition, target);
+
+        // Fit model tightly in view using FOV=45
+        const maxDim = Math.max(sizeVec.x, sizeVec.y, sizeVec.z);
+        const fovRad = 45 * (Math.PI / 180);
+        const fitDist = (maxDim / 2) / Math.tan(fovRad / 2) * 1.2;
+        const camY = sizeVec.y * 0.35;
+        const cameraPosition: [number, number, number] = [0, camY, fitDist];
+        const target: [number, number, number] = [0, sizeVec.y * 0.2, 0];
+
+        setCameraParams(fitDist * 0.8, fitDist * 1.5, cameraPosition, target);
         setGroundY(box.min.y - 0.05);
 
         // --- Shadow and visibility logic ---
@@ -212,15 +209,8 @@ const CarDetailPage = () => {
         return <div className="text-white text-center p-6">Car not found</div>;
     }
 
-    const baseDistance = Math.hypot(
-        cameraParams.cameraPosition[0] - cameraParams.target[0],
-        cameraParams.cameraPosition[1] - cameraParams.target[1],
-        cameraParams.cameraPosition[2] - cameraParams.target[2]
-    );
-
-    const fixedDistance = baseDistance * 0.3;
-    const minZoom = fixedDistance;
-    const maxZoom = fixedDistance;
+    const minZoom = cameraParams.minDistance;
+    const maxZoom = cameraParams.maxDistance;
 
     return (
         <div className="min-h-screen w-full flex flex-col md:flex-row bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white">
@@ -268,7 +258,7 @@ const CarDetailPage = () => {
                     {viewMode === "exterior" ? (
                         <Canvas
                             shadows
-                            camera={{ position: cameraParams.cameraPosition, fov: 50 }}
+                            camera={{ position: cameraParams.cameraPosition, fov: 45 }}
                             dpr={[
                                 1,
                                 typeof window !== "undefined"
@@ -331,9 +321,9 @@ const CarDetailPage = () => {
                                 dampingFactor={0.15}
                                 minDistance={minZoom}
                                 maxDistance={maxZoom}
-                                target={cameraParams.target}
-                                minPolarAngle={Math.PI / 2}
-                                maxPolarAngle={Math.PI / 2}
+                                target={new THREE.Vector3(...cameraParams.target)}
+                                minPolarAngle={Math.PI / 6}
+                                maxPolarAngle={Math.PI / 2.2}
                             />
                         </Canvas>
                     ) : (

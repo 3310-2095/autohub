@@ -5,7 +5,14 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'crmapi.conscor.com',
-        pathname: '/uploads/**', // Optional: Restrict to specific paths
+      },
+      {
+        protocol: 'https',
+        hostname: 'noapi.hanaplatform.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'hel1.your-objectstorage.com',
       },
     ],
   },
