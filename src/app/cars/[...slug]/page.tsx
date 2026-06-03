@@ -2,13 +2,11 @@
 
 import React, { useRef, useState, Suspense, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, useGLTF, Environment } from "@react-three/drei";
+import { useGLTF, Environment } from "@react-three/drei";
 import * as THREE from "three";
-import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import type { Object3D, Mesh } from "three";
 import { useParams, useRouter } from "next/navigation";
 
-// Define interfaces for data structure
 interface Car {
     _id: string;
     sectionData: {
@@ -34,69 +32,65 @@ interface ApiResponse {
     data: Car[];
 }
 
-// CarModel component remains the same
+interface CameraParams {
+    cameraPosition: [number, number, number];
+    target: [number, number, number];
+}
+
+const CameraAnimator = ({ cameraParams }: { cameraParams: CameraParams }) => {
+    const target = new THREE.Vector3(...cameraParams.target);
+    const targetPos = new THREE.Vector3(...cameraParams.cameraPosition);
+    useFrame((state) => {
+        state.camera.position.lerp(targetPos, 0.04);
+        state.camera.lookAt(target);
+        state.camera.updateProjectionMatrix();
+    });
+    return null;
+};
+
 const CarModel = ({
     modelPath,
     carName,
     onLoad,
     setCameraParams,
-    orbitRef,
     setGroundY,
 }: {
     modelPath: string;
     carName: string;
     onLoad: () => void;
-    setCameraParams: (
-        minDistance: number,
-        maxDistance: number,
-        cameraPosition: [number, number, number],
-        target: [number, number, number]
-    ) => void;
-    orbitRef: React.RefObject<OrbitControlsImpl | null>;
+    setCameraParams: (p: CameraParams) => void;
     setGroundY: (y: number) => void;
 }) => {
     const { scene } = useGLTF(modelPath);
-    const modelRef = useRef<THREE.Group>(scene);
-    const isPositionSet = useRef(false);
+    const done = useRef(false);
 
     useEffect(() => {
-        if (!scene || isPositionSet.current) return;
+        if (!scene || done.current) return;
+        done.current = true;
 
-        // --- Camera and positioning logic ---
         const box = new THREE.Box3().setFromObject(scene);
-        const sizeVec = box.getSize(new THREE.Vector3());
-        const size = sizeVec.length();
+        const size = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
-        const validSize = isFinite(size) && size > 0 ? size : 2;
-        const validCenter = {
-            x: isFinite(center.x) ? center.x : 0,
-            y: isFinite(center.y) ? center.y : 0,
-            z: isFinite(center.z) ? center.z : 0,
-        };
-        const bottomY = box.min.y;
-        scene.position.set(-validCenter.x, -bottomY, -validCenter.z);
-        scene.updateMatrix();
-        isPositionSet.current = true;
 
-        // Fit model tightly in view using FOV=45
-        const maxDim = Math.max(sizeVec.x, sizeVec.y, sizeVec.z);
-        const fovRad = 45 * (Math.PI / 180);
-        const fitDist = (maxDim / 2) / Math.tan(fovRad / 2) * 1.2;
-        const camY = sizeVec.y * 0.35;
-        const cameraPosition: [number, number, number] = [0, camY, fitDist];
-        const target: [number, number, number] = [0, sizeVec.y * 0.2, 0];
+        scene.position.set(-center.x, -box.min.y, -center.z);
+        scene.updateMatrixWorld();
 
-        setCameraParams(fitDist * 0.8, fitDist * 1.5, cameraPosition, target);
-        setGroundY(box.min.y - 0.05);
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const fitHeightDistance = maxDim / (2 * Math.tan((50 * Math.PI) / 360));
+        const distance = fitHeightDistance * 1.8;
 
-        // --- Shadow and visibility logic ---
+        // Best angle: front-quarter view, slightly elevated
+        setCameraParams({
+            cameraPosition: [distance * 0.75, distance * 0.3, distance * 0.85],
+            target: [0, size.y * 0.25, 0],
+        });
+        setGroundY(-0.01);
+
         scene.traverse((child: Object3D) => {
             if ((child as Mesh).isMesh) {
-                const mesh = child as Mesh;
-                mesh.castShadow = true;
-                mesh.receiveShadow = true;
+                (child as Mesh).castShadow = true;
+                (child as Mesh).receiveShadow = true;
             }
-
             if (child.name.toLowerCase().includes("interior")) {
                 child.visible = false;
             }
@@ -105,36 +99,21 @@ const CarModel = ({
         onLoad();
     }, [scene, carName, onLoad, setCameraParams, setGroundY]);
 
-    useFrame(() => {
-        if (orbitRef.current) orbitRef.current.update();
-        if (!isPositionSet.current) modelRef.current.updateMatrixWorld();
-    });
-
-    return <primitive object={scene} ref={modelRef} />;
+    return <primitive object={scene} />;
 };
 
-// Loader
 const Loader = () => (
     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
         <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-t-4 border-white border-opacity-80 border-t-yellow-500 rounded-full animate-spin"></div>
     </div>
 );
 
-// The main page component
 const CarDetailPage = () => {
-    const orbitRef = useRef<OrbitControlsImpl | null>(null);
     const [loading, setLoading] = useState(true);
-    const [groundY, setGroundY] = useState(-0.5);
+    const [groundY, setGroundY] = useState(-0.01);
     const [viewMode, setViewMode] = useState<"exterior" | "interior">("exterior");
-    const [cameraParams, setCameraParams] = useState<{
-        minDistance: number;
-        maxDistance: number;
-        cameraPosition: [number, number, number];
-        target: [number, number, number];
-    }>({
-        minDistance: 2,
-        maxDistance: 20,
-        cameraPosition: [0, 1, 8],
+    const [cameraParams, setCameraParams] = useState<CameraParams>({
+        cameraPosition: [9, 2.5, 10],
         target: [0, 0, 0],
     });
 
@@ -142,18 +121,16 @@ const CarDetailPage = () => {
     const router = useRouter();
     const [car, setCar] = useState<Car | null>(null);
     const [apiLoading, setApiLoading] = useState(true);
-    
+
     const carId = params?.slug
         ? Array.isArray(params.slug)
             ? params.slug[params.slug.length - 1]
             : params.slug
         : null;
 
-    // Fetch car data from API
     useEffect(() => {
         const fetchCar = async () => {
             if (!carId) return;
-            
             try {
                 setApiLoading(true);
                 const response = await fetch("https://crmapi.conscor.com/api/general/mfind", {
@@ -169,7 +146,6 @@ const CarDetailPage = () => {
                         limit: 1,
                     }),
                 });
-                
                 const result: ApiResponse = await response.json();
                 if (result.success && result.data.length > 0) {
                     setCar(result.data[0]);
@@ -180,22 +156,10 @@ const CarDetailPage = () => {
                 setApiLoading(false);
             }
         };
-        
         fetchCar();
     }, [carId]);
-    
-    const handleBackClick = () => {
-        router.back();
-    };
 
-    useGLTF.preload(car ? car.sectionData.model.image.replace(/\.(jpg|png)$/, '') : "");
-
-    useEffect(() => {
-        if (orbitRef.current && car) {
-            orbitRef.current.target.set(...cameraParams.target);
-            orbitRef.current.update();
-        }
-    }, [cameraParams, car]);
+    useGLTF.preload(car ? car.sectionData.model.image.replace(/\.(jpg|png)$/, "") : "");
 
     if (apiLoading) {
         return (
@@ -209,18 +173,16 @@ const CarDetailPage = () => {
         return <div className="text-white text-center p-6">Car not found</div>;
     }
 
-    const minZoom = cameraParams.minDistance;
-    const maxZoom = cameraParams.maxDistance;
+    const modelPath = car.sectionData.model.image.replace(/\.(jpg|png)$/, "");
 
     return (
         <div className="min-h-screen w-full flex flex-col md:flex-row bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white">
-            {/* Left Section - Viewer */}
             <div className="w-full md:w-4/5 relative h-[50vh] md:h-screen">
                 {loading && viewMode === "exterior" && <Loader />}
 
                 <div className="absolute top-2 left-2 md:top-4 md:left-10 z-10">
                     <button
-                        onClick={handleBackClick}
+                        onClick={() => router.back()}
                         className="mb-2 px-3 py-1 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition text-xs sm:text-sm md:text-sm"
                     >
                         Back
@@ -248,23 +210,26 @@ const CarDetailPage = () => {
                                 ? "bg-white text-black"
                                 : "bg-transparent text-white hover:bg-white/10"
                         }`}
-                        disabled={true} // Interior not available
+                        disabled
                     >
                         Interior
                     </button>
                 </div>
 
-                <div className="relative w-full h-full">
+                <div
+                    className="relative w-full h-full"
+                    onWheel={(e) => e.preventDefault()}
+                    onTouchMove={(e) => e.preventDefault()}
+                >
                     {viewMode === "exterior" ? (
                         <Canvas
                             shadows
-                            camera={{ position: cameraParams.cameraPosition, fov: 45 }}
-                            dpr={[
-                                1,
-                                typeof window !== "undefined"
-                                    ? window.devicePixelRatio
-                                    : 1,
-                            ]}
+                            camera={{ position: [9, 2.5, 10], fov: 45 }}
+                            onCreated={({ gl }) => {
+                                gl.domElement.addEventListener("wheel", (e) => e.preventDefault(), { passive: false });
+                                gl.domElement.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
+                            }}
+                            dpr={[1, typeof window !== "undefined" ? window.devicePixelRatio : 1]}
                             gl={{
                                 antialias: true,
                                 toneMapping: THREE.ACESFilmicToneMapping,
@@ -273,6 +238,7 @@ const CarDetailPage = () => {
                             className="w-full h-full"
                             style={{ background: "#1a1a1a" }}
                         >
+                            <CameraAnimator cameraParams={cameraParams} />
                             <ambientLight intensity={0.6} />
                             <directionalLight
                                 castShadow
@@ -293,50 +259,23 @@ const CarDetailPage = () => {
                             </mesh>
                             <Suspense fallback={<group />}>
                                 <CarModel
-                                    modelPath={car.sectionData.model.image.replace(/\.(jpg|png)$/, '')}
+                                    modelPath={modelPath}
                                     carName={car.sectionData.model.Model}
                                     onLoad={() => setLoading(false)}
-                                    setCameraParams={(
-                                        minDistance,
-                                        maxDistance,
-                                        cameraPosition,
-                                        target
-                                    ) =>
-                                        setCameraParams({
-                                            minDistance,
-                                            maxDistance,
-                                            cameraPosition,
-                                            target,
-                                        })
-                                    }
-                                    orbitRef={orbitRef}
+                                    setCameraParams={setCameraParams}
                                     setGroundY={setGroundY}
                                 />
                             </Suspense>
-                            <OrbitControls
-                                ref={orbitRef}
-                                enablePan={false}
-                                enableZoom={false}
-                                enableDamping
-                                dampingFactor={0.15}
-                                minDistance={minZoom}
-                                maxDistance={maxZoom}
-                                target={new THREE.Vector3(...cameraParams.target)}
-                                minPolarAngle={Math.PI / 6}
-                                maxPolarAngle={Math.PI / 2.2}
-                            />
+
                         </Canvas>
                     ) : (
-                        <div
-                            className="w-full h-full bg-cover bg-center bg-gray-800 flex items-center justify-center"
-                        >
+                        <div className="w-full h-full bg-gray-800 flex items-center justify-center">
                             <p className="text-white text-lg">Interior view not available</p>
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* Right Section - Details */}
             <div
                 className="w-full md:w-1/4 flex flex-col justify-between items-center p-4 md:p-6 mt-4 md:mt-0"
                 style={{
@@ -347,45 +286,29 @@ const CarDetailPage = () => {
             >
                 <div className="text-center space-y-4 w-full max-w-xs">
                     <h2 className="text-md sm:text-xl md:text-2xl font-semibold border-b border-gray-600 pb-2 md:pb-4">
-                        ₱ {parseInt(car.sectionData.model.price).toLocaleString()}
+                        &#8369; {parseInt(car.sectionData.model.price).toLocaleString()}
                     </h2>
                 </div>
 
-                {/* Specs */}
                 <div className="grid grid-cols-2 gap-3 w-full max-w-xs text-center mt-6">
                     <div className="p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
-                        <div className="text-base md:text-lg font-bold">
-                            {car.sectionData.model.Enginepower}
-                        </div>
+                        <div className="text-base md:text-lg font-bold">{car.sectionData.model.Enginepower}</div>
                         <div className="text-xs sm:text-sm">Engine Power</div>
                     </div>
                     <div className="p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
-                        <div className="text-base md:text-lg font-bold">
-                            {car.sectionData.model.Enginecapacity}
-                        </div>
+                        <div className="text-base md:text-lg font-bold">{car.sectionData.model.Enginecapacity}</div>
                         <div className="text-xs sm:text-sm">Engine Capacity</div>
                     </div>
                     <div className="p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
-                        <div className="text-base md:text-lg font-bold">
-                            {car.sectionData.model.Maxspeed}
-                        </div>
-                        <div className="text-xs sm:text-sm">
-                            Max
-                            <span className="hidden md:inline">
-                                <br />
-                            </span>
-                            Speed
-                        </div>
+                        <div className="text-base md:text-lg font-bold">{car.sectionData.model.Maxspeed}</div>
+                        <div className="text-xs sm:text-sm">Max Speed</div>
                     </div>
                     <div className="p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
-                        <div className="text-base md:text-lg font-bold">
-                            {car.sectionData.model.Enginetorque}
-                        </div>
+                        <div className="text-base md:text-lg font-bold">{car.sectionData.model.Enginetorque}</div>
                         <div className="text-xs sm:text-sm">Engine Torque</div>
                     </div>
                 </div>
 
-                {/* 0-100 */}
                 <div className="text-center mt-6 p-3 md:p-4 rounded-lg hover:bg-gray-600 transition">
                     <div className="text-base md:text-lg font-semibold">0-100 km/h</div>
                     <div className="text-xs sm:text-sm text-gray-300">
@@ -393,7 +316,6 @@ const CarDetailPage = () => {
                     </div>
                 </div>
 
-                {/* View Price */}
                 <div className="w-full max-w-xs mt-6 mb-8">
                     <button className="w-full py-2.5 md:py-3 bg-white bg-opacity-90 text-black rounded-md hover:bg-gray-200 font-semibold transition text-base">
                         VIEW PRICE

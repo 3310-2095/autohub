@@ -8,13 +8,6 @@ import * as THREE from "three";
 
 useGLTF.setDecoderPath("/draco/");
 
-const COLORS = [
-  { label: "Dark Red",  value: "darkred" },
-  { label: "White",     value: "#ffffff" },
-  { label: "Black",     value: "#111111" },
-  { label: "Navy Blue", value: "#1a237e" },
-  { label: "Silver",    value: "#b0bec5" },
-];
 
 const MODEL_MAP: Record<string, string> = {
   xpander:    "/model/xpander.glb",
@@ -143,7 +136,7 @@ function ShowroomContent() {
   const searchParams = useSearchParams();
   const modelName = searchParams.get("model") || "xpander";
   const modelPath = getModelPath(modelName);
-  const [color, setColor] = useState("darkred");
+  const color = "darkred";
   const [debugInfo, setDebugInfo] = useState("");
 
   useGLTF.preload(modelPath);
