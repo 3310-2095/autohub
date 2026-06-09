@@ -28,7 +28,7 @@
             "brand": "Suzuki",
             "page": "/cars/1",
             "price": "₱ 700,000",
-            "modelPath": "/model/XL7.glb",
+            "modelPath": "/model/Suzuki-20260609T054307Z-3-001/Suzuki/XL7/XL7.glb",
             "colors": [
                 "#ffffff",
                 "#ff0000",
@@ -48,9 +48,9 @@
             "image": "/carimage/s-presso.png",
             "brandLogo": "/carimage/logo.png",
             "brand": "Suzuki",
-            "page": "/spresso",
+            "page": "/cars/2",
             "price": "₱ 550,000",
-            "modelPath": "/model/spresso_model.glb",
+            "modelPath": "/model/Suzuki-20260609T054307Z-3-001/Suzuki/Spresso/Spresso.glb",
             "colors": [
                 "#000000",
                 "#ffffff",
@@ -70,9 +70,9 @@
             "image": "/carimage/jimny.png",
             "brandLogo": "/carimage/logo.png",
             "brand": "Suzuki",
-            "page": "/jimny",
+            "page": "/cars/3",
             "price": "₱ 1,200,000",
-            "modelPath": "/model/jimny/jimny.glb",
+            "modelPath": "/model/Suzuki-20260609T054307Z-3-001/Suzuki/Jimny/Jimny.glb",
             "colors": [
                 "#2d3748",
                 "#1a202c",
@@ -92,9 +92,9 @@
             "image": "/carimage/ertiga.png",
             "brandLogo": "/carimage/logo.png",
             "brand": "Suzuki",
-            "page": "/ertiga",
+            "page": "/cars/4",
             "price": "₱ 900,000",
-            "modelPath": "/model/ertiga.glb", 
+            "modelPath": "/model/Suzuki-20260609T054307Z-3-001/Suzuki/Ertiga/Ertiga.glb",
             "colors": [
                 "#FFFFFF",
                 "#a0aec0",
@@ -114,9 +114,9 @@
             "image": "/carimage/navara.png",
             "brandLogo": "/images/image 2.png",
             "brand": "Nissan",
-            "page": "/navara",
+            "page": "/cars/5",
             "price": "₱ 1,500,000",
-            "modelPath": "/model/navara/navara.glb",
+            "modelPath": "/model/Nissan-20260609T054349Z-3-001/Nissan/Navara/Navara.glb",
             "colors": [
                 "#1a202c",
                 "#ffffff",
@@ -136,9 +136,9 @@
             "image": "/carimage/kicks.png",
             "brandLogo": "/images/image 2.png",
             "brand": "Nissan",
-            "page": "/kicks",
+            "page": "/cars/6",
             "price": "₱ 1,100,000",
-            "modelPath": "/model/kicks.glb",
+            "modelPath": "/model/Nissan-20260609T054349Z-3-001/Nissan/Kicks/Kicks.glb",
             "colors": [
                 "#2b6cb0",
                 "#ffffff",
@@ -158,9 +158,9 @@
             "image": "/carimage/xpander.png",
             "brandLogo": "/images/mitsubishi.png",
             "brand": "Mitsubishi",
-            "page": "/xpander",
+            "page": "/cars/7",
             "price": "₱ 1,050,000",
-            "modelPath": "/model/xpander.glb",
+            "modelPath": "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/Xpander/Xpander.glb",
             "colors": [
                 "#718096",
                 "#ffffff",
@@ -180,9 +180,9 @@
             "image": "/carimage/xforce.png",
             "brandLogo": "/images/mitsubishi.png",
             "brand": "Mitsubishi",
-            "page": "/xforce",
+            "page": "/cars/8",
             "price": "₱ 1,300,000",
-            "modelPath": "/model/xforce.glb",
+            "modelPath": "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/Xforce/Xforce.glb",
             "colors": [
                 "#000000",
                 "#4a5568",
@@ -202,9 +202,9 @@
             "image": "/carimage/montero.png",
             "brandLogo": "/images/mitsubishi.png",
             "brand": "Mitsubishi",
-            "page": "/montero",
+            "page": "/cars/9",
             "price": "₱ 2,000,000",
-            "modelPath": "/model/montero.glb",
+            "modelPath": "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/Montero/Montero.glb",
             "colors": [
                 "#2d3748",
                 "#ffffff",
@@ -216,6 +216,116 @@
                 "speed": "118 mph",
                 "torque": "245 Nm",
                 "acceleration": "10.0 seconds"
+            }
+        },
+        {
+            "id": 10,
+            "name": "Celerio",
+            "image": "/model/Suzuki-20260609T054307Z-3-001/Suzuki/Celerio/Celerio.png",
+            "brandLogo": "/carimage/logo.png",
+            "brand": "Suzuki",
+            "page": "/cars/10",
+            "price": "₱ 580,000",
+            "modelPath": "/model/Suzuki-20260609T054307Z-3-001/Suzuki/Celerio/Celerio.glb",
+            "colors": [
+                "#ffffff",
+                "#e53e3e",
+                "#2b6cb0"
+            ],
+            "specs": {
+                "power": "67 hp",
+                "capacity": "1.0 L",
+                "speed": "100 mph",
+                "torque": "90 Nm",
+                "acceleration": "13.0 seconds"
+            }
+        },
+        {
+            "id": 11,
+            "name": "Almera",
+            "image": "/model/Nissan-20260609T054349Z-3-001/Nissan/Almera/Almera.png",
+            "brandLogo": "/images/image 2.png",
+            "brand": "Nissan",
+            "page": "/cars/11",
+            "price": "₱ 800,000",
+            "modelPath": "/model/Nissan-20260609T054349Z-3-001/Nissan/Almera/Almera.glb",
+            "colors": [
+                "#ffffff",
+                "#1a202c",
+                "#c53030"
+            ],
+            "specs": {
+                "power": "99 hp",
+                "capacity": "1.5 L",
+                "speed": "108 mph",
+                "torque": "134 Nm",
+                "acceleration": "11.5 seconds"
+            }
+        },
+        {
+            "id": 12,
+            "name": "Livina",
+            "image": "/model/Nissan-20260609T054349Z-3-001/Nissan/Livina/Livina.png",
+            "brandLogo": "/images/image 2.png",
+            "brand": "Nissan",
+            "page": "/cars/12",
+            "price": "₱ 900,000",
+            "modelPath": "/model/Nissan-20260609T054349Z-3-001/Nissan/Livina/Livina.glb",
+            "colors": [
+                "#ffffff",
+                "#2d3748",
+                "#d69e2e"
+            ],
+            "specs": {
+                "power": "111 hp",
+                "capacity": "1.6 L",
+                "speed": "112 mph",
+                "torque": "152 Nm",
+                "acceleration": "11.0 seconds"
+            }
+        },
+        {
+            "id": 13,
+            "name": "Mirage G4",
+            "image": "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/MirageG4/MirageG4.png",
+            "brandLogo": "/images/mitsubishi.png",
+            "brand": "Mitsubishi",
+            "page": "/cars/13",
+            "price": "₱ 650,000",
+            "modelPath": "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/MirageG4/Mirage.glb",
+            "colors": [
+                "#ffffff",
+                "#e53e3e",
+                "#2b6cb0"
+            ],
+            "specs": {
+                "power": "77 hp",
+                "capacity": "1.2 L",
+                "speed": "105 mph",
+                "torque": "100 Nm",
+                "acceleration": "13.0 seconds"
+            }
+        },
+        {
+            "id": 14,
+            "name": "Mirage Hatchback",
+            "image": "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/MirageHatchback/MirageHatchback.png",
+            "brandLogo": "/images/mitsubishi.png",
+            "brand": "Mitsubishi",
+            "page": "/cars/14",
+            "price": "₱ 600,000",
+            "modelPath": "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/MirageHatchback/Hatchback.glb",
+            "colors": [
+                "#ffffff",
+                "#e53e3e",
+                "#48bb78"
+            ],
+            "specs": {
+                "power": "77 hp",
+                "capacity": "1.2 L",
+                "speed": "105 mph",
+                "torque": "100 Nm",
+                "acceleration": "13.2 seconds"
             }
         }
     ]

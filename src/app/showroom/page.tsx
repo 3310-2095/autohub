@@ -10,30 +10,43 @@ useGLTF.setDecoderPath("/draco/");
 
 
 const MODEL_MAP: Record<string, string> = {
-  xpander:    "/model/xpander.glb",
-  montero:    "/model/montero.glb",
-  xforce:     "/model/xforce.glb",
-  xl7:        "/model/XL7.glb",
-  ertiga:     "/model/ertiga.glb",
-  kicks:      "/model/kicks.glb",
-  jimny:      "/model/jimny/jimny.glb",
-  navara:     "/model/navara/navara.glb",
-  spresso:    "/model/spresso_model.glb",
-  "s-presso": "/model/spresso_model.glb",
+  // Mitsubishi
+  mirageg4:          "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/MirageG4/Mirage.glb",
+  "mirage-hatchback":"/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/MirageHatchback/Hatchback.glb",
+  xpander:           "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/Xpander/Xpander.glb",
+  montero:           "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/Montero/Montero.glb",
+  xforce:            "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/Xforce/Xforce.glb",
+  // Nissan
+  almera:            "/model/Nissan-20260609T054349Z-3-001/Nissan/Almera/Almera.glb",
+  kicks:             "/model/Nissan-20260609T054349Z-3-001/Nissan/Kicks/Kicks.glb",
+  livina:            "/model/Nissan-20260609T054349Z-3-001/Nissan/Livina/Livina.glb",
+  navara:            "/model/Nissan-20260609T054349Z-3-001/Nissan/Navara/Navara.glb",
+  // Suzuki
+  celerio:           "/model/Suzuki-20260609T054307Z-3-001/Suzuki/Celerio/Celerio.glb",
+  ertiga:            "/model/Suzuki-20260609T054307Z-3-001/Suzuki/Ertiga/Ertiga.glb",
+  jimny:             "/model/Suzuki-20260609T054307Z-3-001/Suzuki/Jimny/Jimny.glb",
+  spresso:           "/model/Suzuki-20260609T054307Z-3-001/Suzuki/Spresso/Spresso.glb",
+  "s-presso":        "/model/Suzuki-20260609T054307Z-3-001/Suzuki/Spresso/Spresso.glb",
+  xl7:               "/model/Suzuki-20260609T054307Z-3-001/Suzuki/XL7/XL7.glb",
 };
 
 // targetSize: how wide/long the car should appear (tune per model)
 // yOffset: fine-tune vertical position (positive = up, negative = down)
 const MODEL_CONFIG: Record<string, { targetSize: number; yOffset: number }> = {
-  "/model/xpander.glb":       { targetSize: 4, yOffset: 0 },
-  "/model/montero.glb":       { targetSize: 4, yOffset: 0 },
-  "/model/xforce.glb":        { targetSize: 4, yOffset: 0 },
-  "/model/XL7.glb":           { targetSize: 4, yOffset: 0 },
-  "/model/ertiga.glb":        { targetSize: 4, yOffset: 0 },
-  "/model/kicks.glb":         { targetSize: 4, yOffset: 0 },
-  "/model/jimny/jimny.glb":   { targetSize: 4, yOffset: 0 },
-  "/model/navara/navara.glb": { targetSize: 4, yOffset: 0 },
-  "/model/spresso_model.glb": { targetSize: 4, yOffset: 0 },
+  "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/MirageG4/Mirage.glb":          { targetSize: 4, yOffset: 0 },
+  "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/MirageHatchback/Hatchback.glb": { targetSize: 4, yOffset: 0 },
+  "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/Xpander/Xpander.glb":          { targetSize: 4, yOffset: 0 },
+  "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/Montero/Montero.glb":          { targetSize: 4, yOffset: 0 },
+  "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/Xforce/Xforce.glb":            { targetSize: 4, yOffset: 0 },
+  "/model/Nissan-20260609T054349Z-3-001/Nissan/Almera/Almera.glb":                    { targetSize: 4, yOffset: 0 },
+  "/model/Nissan-20260609T054349Z-3-001/Nissan/Kicks/Kicks.glb":                      { targetSize: 4, yOffset: 0 },
+  "/model/Nissan-20260609T054349Z-3-001/Nissan/Livina/Livina.glb":                    { targetSize: 4, yOffset: 0 },
+  "/model/Nissan-20260609T054349Z-3-001/Nissan/Navara/Navara.glb":                    { targetSize: 4, yOffset: 0 },
+  "/model/Suzuki-20260609T054307Z-3-001/Suzuki/Celerio/Celerio.glb":                  { targetSize: 4, yOffset: 0 },
+  "/model/Suzuki-20260609T054307Z-3-001/Suzuki/Ertiga/Ertiga.glb":                    { targetSize: 4, yOffset: 0 },
+  "/model/Suzuki-20260609T054307Z-3-001/Suzuki/Jimny/Jimny.glb":                      { targetSize: 4, yOffset: 0 },
+  "/model/Suzuki-20260609T054307Z-3-001/Suzuki/Spresso/Spresso.glb":                  { targetSize: 4, yOffset: 0 },
+  "/model/Suzuki-20260609T054307Z-3-001/Suzuki/XL7/XL7.glb":                          { targetSize: 4, yOffset: 0 },
 };
 
 // The Y position of the showroom display platform floor
@@ -45,7 +58,7 @@ function getModelPath(modelName: string): string {
   for (const [k, v] of Object.entries(MODEL_MAP)) {
     if (key.includes(k)) return v;
   }
-  return "/model/xpander.glb";
+  return "/model/Mitsubishi-20260609T054405Z-3-001/Mitsubishi/Xpander/Xpander.glb";
 }
 
 function ShowroomBackground() {
